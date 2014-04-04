@@ -1,0 +1,12 @@
+{
+  "name"         : "Shimmy",
+  "version"      : "0.0.0",
+  "description"  : "Shimmy Backend.",
+  "main"         : "server.js",
+  "author"       : "Tyler Harrington",
+  "dependencies" : 
+  {
+    "express"    : "~3.4.x",
+    "mongoose"   : "~3.6.x"
+  }
+}
