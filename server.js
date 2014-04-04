@@ -8,6 +8,8 @@ var mongoose  = require('mongoose');
 var url = process.env.MONGOLAB_URI ||
         process.env.MONGOHQ_URL ||
         'mongodb://localhost/27017/test';
+var port = Number(process.env.PORT || 5000);
+
 mongoose.connect(url); 
 
 app.configure(function() {
@@ -21,8 +23,8 @@ app.configure(function() {
 require('./app/routes')(app);
 
 // listen (start app with node server.js) ======================================
-app.listen(8080);
-console.log("App listening on port 8080");
+app.listen(port);
+console.log("App listening on port " + port);
 
 
 
