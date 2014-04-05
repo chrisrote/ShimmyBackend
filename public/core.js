@@ -15,6 +15,9 @@ function mainController($scope, $http) {
 
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
+
+		// Create callout to google maps api to perform geocode
+
 		$http.post('/api/property', $scope.formData)
 			.success(function(data){
 				$scope.formData = {};	// Clear the form to the user can input another

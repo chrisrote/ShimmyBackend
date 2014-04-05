@@ -12,22 +12,29 @@ module.exports = function(app) {
 				console.log('ERROR IN GETTING PROPERTIES: ' + err);
 				res.send(err);
 			}
-			console.log('got some properties: ' + properties);
+			console.log('got some properties: ' + properties.length);
 			res.json(properties);
 		});
 	});
 
 	// CREATE PROPERTY ========================================================
 	app.post('/api/property', function(req, res) {
+		console.log('request body: ' + req.body);
 		Property.create({
-			name 		: req.body.name
+			name 		: req.body.name,
+			address		: req.body.address,
+			description	: req.body.description,
+			num_beds	: req.body.numBeds,
+			num_baths	: req.body.numBaths
 		}, function(err, property) {
 			if(err) {
+				console.log('error creating property')
 				res.send(err);
 			}
 
 			Property.find(function(err, properties) {
 				if(err) res.send(err);
+				console.log('A TOTAL OF ' + properties.length + ' properties');
 				res.json(properties);
 			});
 		}); 
