@@ -35,27 +35,43 @@
 		<!-- FORM TO CREATE PROPERTIES -->
 		<div id="properties-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-left">
-				<form role="form">
+				<form role="form" name="formData" novalidate>
   					
-  					<div class="form-group">
-    					<label for="nameField">Name</label>
-    					<input type="text" class="form-control" id="nameField" placeholder="Enter Name" ng-model="formData.name">
+  					<div class="form-group" ng-class="{ 'has-error' : formData.name.$invalid && !formData.name.$pristine }">
+    					<label for="nameField">Name *</label>
+    					<input type="text" class="form-control" id="nameField" placeholder="Enter Name" ng-model="formData.name" required>
+              <p ng-show="formData.name.$invalid && !formData.name.$pristine" class="help-block">Name is required.</p>
   					</div>
 
   					<div class="form-group">
-    					<label for="addrField">Address</label>
-    					<input type="text" class="form-control" id="addrField" placeholder="Enter Address" ng-model="formData.address">
-  					</div>
+    					<label for="addrField">Address *</label>
+    					<input type="text" class="form-control" id="addrField" placeholder="Enter Address" ng-model="formData.address" required>
+  					  <p ng-show="formData.address.$invalid && !formData.address.$pristine" class="help-block">Address is required.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="cityField">City *</label>
+              <input type="text" class="form-control" id="cityField" placeholder="Enter City" ng-model="formData.city" required>
+              <p ng-show="formData.city.$invalid && !formData.city.$pristine" class="help-block">City is required.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="stateField">State *</label>
+              <input type="text" class="form-control" id="stateField" placeholder="Enter State" ng-model="formData.state" ng-minlength="2" ng-maxlength="2" required>
+              <p ng-show="formData.state.$error.minlength || formData.state.$error.maxlength" class="help-block">Please enter 2 character state code.</p>
+            </div>
 
   					<div class="form-group">
-    					<label for="bedField">Bedrooms</label>
-    					<input type="text" class="form-control" id="bedField" placeholder="Enter Bedrooms" ng-model="formData.numBeds">
-  					</div>
+    					<label for="bedField">Bedrooms *</label>
+    					<input type="text" class="form-control" id="bedField" placeholder="Enter Bedrooms" ng-model="formData.numBeds" required>
+  					  <p ng-show="formData.numBeds.$invalid && !formData.numBeds.$pristine" class="help-block">Number of bedrooms is required.</p>
+            </div>
 
   					<div class="form-group">
-    					<label for="bathField">Bathrooms</label>
-    					<input type="text" class="form-control" id="bathField" placeholder="Enter Bathrooms" ng-model="formData.numBaths">
-  					</div>
+    					<label for="bathField">Bathrooms *</label>
+    					<input type="text" class="form-control" id="bathField" placeholder="Enter Bathrooms" ng-model="formData.numBaths" required>
+              <p ng-show="formData.numBaths.$invalid && !formData.numBaths.$pristine" class="help-block">number of bathrooms is required.</p>
+            </div>
 
   					<div class="dropdown">
   						<button class="btn dropdown-toggle sr-only" type="button" id="dropdownMenu1" data-toggle="dropdown">
@@ -80,7 +96,8 @@
     					<input type="file" id="exampleInputFile">
   					</div>
   					<!-- createProperty() WILL CREATE NEW PROPERTIES -->
-					<button type="submit" class="btn btn-primary btn-lg" ng-click="createProperty()">Submit Property</button>
+					  <button type="submit" class="btn btn-primary btn-lg" ng-click="createProperty(formData.$valid)">Submit Property</button> 
+            <!--<button type="submit" class="btn btn-primary">Submit</button> -->
 				</form>
 			</div>
 		</div>

@@ -14,19 +14,21 @@ function mainController($scope, $http) {
 		});
 
 	// when submitting the add form, send the text to the node API
-	$scope.createProperty = function() {
+	$scope.createProperty = function(isValid) {
 
-		// Create callout to google maps api to perform geocode
-
-		$http.post('/api/property', $scope.formData)
+		if(isValid) {
+			$http.post('/api/property', $scope.formData)
 			.success(function(data){
 				$scope.formData = {};	// Clear the form to the user can input another
 				$scope.properties = data;
-				console.log(data);
+				alert('Property submitted successfully.');
 			})
 			.error(function(data){
 				console.log('Error: ' + data);
 			});
+		} else {
+			alert('Please enter all data.');	
+		}
 	};
 
 	// delete a todo after checking it
