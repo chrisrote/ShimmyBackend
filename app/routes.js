@@ -5,7 +5,8 @@ var crypto = require('crypto');
 var path = require('path');
 
 var prop_api = require('./apis/prop_api'),
-	aws = require('./apis/aws');
+	aws = require('./apis/aws'),
+	auth_api = require('./apis/auth_api');
     //index = require('./controllers'),
 
 // expose the routes to our app with module.exports
@@ -21,17 +22,7 @@ module.exports = function(app, passport) {
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', prop_api.deleteProperty);
 
-	app.get('/new_property', function(req, res) {
-		res.sendfile('./public/index.html'); 
-	});
-
-	// application -------------------------------------------------------------
-	/*app.get('*', function(req, res) {
-		res.sendfile('./public/index.html'); 
-	});*/
-
-
-
+	
 	// =====================================
 	// HOME PAGE (with login links) ========
 	// =====================================
@@ -80,6 +71,12 @@ module.exports = function(app, passport) {
 	// we will use route middleware to verify this (the isLoggedIn function)
 	app.get('/profile', isLoggedIn, function(req, res) {
 		res.render('profile.ejs', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
+
+	app.get('/new_property', isLoggedIn, function(req, res) {
+		res.render('new_property.ejs', {
 			user : req.user // get the user out of session and pass to template
 		});
 	});
