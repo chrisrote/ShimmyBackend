@@ -1,109 +1,110 @@
-<!-- index.html -->
 <!doctype html>
-
-<!-- ASSIGN OUR ANGULAR MODULE -->
 <html ng-app="shimmy">
 <head>
-	<!-- META -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
 
 	<title>Shimmy Create Properties</title>
 
-	<!-- SCROLLS -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/slider.css">
 
-	<style>
-		html 					{ overflow-y:scroll; }
-		body 					{ padding-top:50px; }
-		#properties-list		{ margin-bottom:30px; }
-	</style>
-
-	<script type="text/javascript">
-	</script>
-	
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
-	<script src="core.js"></script>
-	<script src="js/bootstrap-slider.js"></script>
-
 </head>
+
 <!-- SET THE CONTROLLER AND GET ALL properties -->
 <body ng-controller="mainController">
-	<div class="container">
+  <div class="jumbotron">
+    <div class="container">
+      <h1>Shimmy Properties</h1>
+      <p>Get started by entering property details.</p>
+    </div>
+  </div>
+
+
+	<div class="container" style="padding-bottom: 40px;">
 		<!-- FORM TO CREATE PROPERTIES -->
 		<div id="properties-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-left">
-				<form role="form" name="formData" novalidate>
-  					
-  					<div class="form-group" ng-class="{ 'has-error' : formData.name.$invalid && !formData.name.$pristine }">
+				<form role="form" name="formData">  					
+  					<div class="form-group">
     					<label for="nameField">Name *</label>
     					<input type="text" class="form-control" id="nameField" placeholder="Enter Name" ng-model="formData.name" required>
-              <p ng-show="formData.name.$invalid && !formData.name.$pristine" class="help-block">Name is required.</p>
   					</div>
 
   					<div class="form-group">
     					<label for="addrField">Address *</label>
     					<input type="text" class="form-control" id="addrField" placeholder="Enter Address" ng-model="formData.address" required>
-  					  <p ng-show="formData.address.$invalid && !formData.address.$pristine" class="help-block">Address is required.</p>
             </div>
 
             <div class="form-group">
               <label for="cityField">City *</label>
               <input type="text" class="form-control" id="cityField" placeholder="Enter City" ng-model="formData.city" required>
-              <p ng-show="formData.city.$invalid && !formData.city.$pristine" class="help-block">City is required.</p>
             </div>
 
             <div class="form-group">
               <label for="stateField">State *</label>
               <input type="text" class="form-control" id="stateField" placeholder="Enter State" ng-model="formData.state" ng-minlength="2" ng-maxlength="2" required>
-              <p ng-show="formData.state.$error.minlength || formData.state.$error.maxlength" class="help-block">Please enter 2 character state code.</p>
             </div>
 
   					<div class="form-group">
     					<label for="bedField">Bedrooms *</label>
     					<input type="text" class="form-control" id="bedField" placeholder="Enter Bedrooms" ng-model="formData.numBeds" required>
-  					  <p ng-show="formData.numBeds.$invalid && !formData.numBeds.$pristine" class="help-block">Number of bedrooms is required.</p>
             </div>
 
   					<div class="form-group">
     					<label for="bathField">Bathrooms *</label>
     					<input type="text" class="form-control" id="bathField" placeholder="Enter Bathrooms" ng-model="formData.numBaths" required>
-              <p ng-show="formData.numBaths.$invalid && !formData.numBaths.$pristine" class="help-block">number of bathrooms is required.</p>
             </div>
-
-  					<div class="dropdown">
-  						<button class="btn dropdown-toggle sr-only" type="button" id="dropdownMenu1" data-toggle="dropdown">
-    						Neighborhood
-    						<span class="caret"></span>
-  						</button>
-  						<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-    						<li role="presentation">River North</li>
-    						<li role="presentation">Old Town</li>
-    						<li role="presentation">Lincoln Park</li>
-    						<li role="presentation">West Loop</li>
-  						</ul>
-					</div>
 
   					<div class="form-group">
     					<label for="descField">Description</label>
     					<textarea class="form-control" id="descField" ng-model="formData.description" srows="3"></textarea>
   					</div>
 
-  					<div class="form-group">
-    					<label for="exampleInputFile">Upload Images</label>
-    					<input type="file" id="exampleInputFile">
-  					</div>
   					<!-- createProperty() WILL CREATE NEW PROPERTIES -->
 					  <button type="submit" class="btn btn-primary btn-lg" ng-click="createProperty(formData.$valid)">Submit Property</button> 
-            <!--<button type="submit" class="btn btn-primary">Submit</button> -->
 				</form>
 			</div>
 		</div>
 	</div>
 
+  <!--<div class="row" style="margin: 40px 0;">
+      <div class="form-group">
+          <label for="photos">Input Picture</label>
+          <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
+          <p class="help-block">Select pictures</p>
+          <div ng-repeat="file in files" class="container">
+              <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
+                      {{file.name}} : {{file.progress}}
+                  </div>
+              </div>
+              <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
+          </div>
+      </div>
+  </div>-->
 
+  <style>
+    #footer {
+      bottom: 0;
+      width: 100%;
+      /* Set the fixed height of the footer here */
+      height: 60px;
+      background-color: #f5f5f5;
+    }
+  </style>
 
+  <div id="footer">
+      <div class="container">
+        <p class="text-muted">Thanks for coming.</p>
+      </div>
+    </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="/js/angular-file-upload-shim.min.js"></script> 
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
+  <script src="/js/angular-file-upload.min.js"></script> 
+  <script type="text/javascript" src="core.js"></script>
+  <script type="text/javascript" src="/js/bootstrap-slider.js"></script>
 </body>
 </html>

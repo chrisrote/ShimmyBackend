@@ -4,6 +4,9 @@ var express   = require('express');
 var app     = express();
 var mongoose  = require('mongoose');
 
+var AWS = require('aws-sdk');
+AWS.config.loadFromPath('./app/config/aws.json');
+
 // configuration ===============================================================
 var url = process.env.MONGOLAB_URI ||
         process.env.MONGOHQ_URL ||
