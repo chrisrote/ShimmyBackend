@@ -1,4 +1,5 @@
 var Property = require('../models/property');
+var https = require('https');
 
 exports.createProperties = function(req, res) {
 	// Callout to Google Geocoding API

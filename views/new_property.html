@@ -8,6 +8,9 @@
 
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+  <script type="text/javascript" src="/core.js"></script>
 </head>
 
 <!-- SET THE CONTROLLER AND GET ALL properties -->
@@ -19,9 +22,8 @@
     </div>
   </div>
 
-
+  <!-- FORM TO CREATE PROPERTIES -->
 	<div class="container" style="padding-bottom: 40px;">
-		<!-- FORM TO CREATE PROPERTIES -->
 		<div id="properties-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-left">
 				<form role="form" name="formData">  					
@@ -60,28 +62,12 @@
     					<textarea class="form-control" id="descField" ng-model="formData.description" srows="3"></textarea>
   					</div>
 
-  					<!-- createProperty() WILL CREATE NEW PROPERTIES -->
 					  <button type="submit" class="btn btn-primary btn-lg" ng-click="createProperty(formData.$valid)">Submit Property</button> 
 				</form>
 			</div>
 		</div>
 	</div>
 
-  <!--<div class="row" style="margin: 40px 0;">
-      <div class="form-group">
-          <label for="photos">Input Picture</label>
-          <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
-          <p class="help-block">Select pictures</p>
-          <div ng-repeat="file in files" class="container">
-              <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
-                      {{file.name}} : {{file.progress}}
-                  </div>
-              </div>
-              <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
-          </div>
-      </div>
-  </div>-->
 
   <style>
     #footer {
@@ -98,9 +84,5 @@
         <p class="text-muted">Thanks for coming.</p>
       </div>
     </div>
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
-  <script type="text/javascript" src="core.js"></script>
 </body>
 </html>

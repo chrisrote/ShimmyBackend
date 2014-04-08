@@ -76,7 +76,7 @@ module.exports = function(app, passport) {
 	});
 
 	app.get('/new_property', isLoggedIn, function(req, res) {
-		res.render('new_property.ejs', {
+		res.sendfile('./views/new_property.html', {
 			user : req.user // get the user out of session and pass to template
 		});
 	});
