@@ -1,10 +1,13 @@
 
 // set up ======================================================================
-var express   = require('express');
-var app     = express();
-var mongoose  = require('mongoose');
+var express   		= require('express');
+var app     		= express();
+var mongoose  		= require('mongoose');
+var passport 		= require('passport');
+var flash 	 		= require('connect-flash');
+var AWS 			= require('aws-sdk');
 
-var AWS = require('aws-sdk');
+
 AWS.config.loadFromPath('./app/config/aws.json');
 
 // configuration ===============================================================
@@ -14,16 +17,29 @@ var url = process.env.MONGOLAB_URI ||
 var port = Number(process.env.PORT || 5000);
 
 mongoose.connect(url); 
+require('./config/passport')(passport); // pass passport for configuration
 
 app.configure(function() {
-  app.use(express.static(__dirname + '/public'));     // set the static files location /public/img will be /img for users
-  app.use(express.logger('dev'));                     // log every request to the console
-  app.use(express.bodyParser());                      // pull information from html in POST
-  app.use(express.methodOverride());                  // simulate DELETE and PUT
+
+	// set up our express application
+	app.use(express.logger('dev')); // log every request to the console
+	app.use(express.cookieParser()); // read cookies (needed for auth)
+	app.use(express.bodyParser()); // get information from html forms
+
+	app.set('view engine', 'ejs'); // set up ejs for templating
+
+	// required for passport
+	app.use(express.session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+	app.use(passport.initialize());
+	app.use(passport.session()); // persistent login sessions
+	app.use(flash()); 
+  
+  	//app.use(express.static(__dirname + '/public'));     // set the static files location /public/img will be /img for users
+  	//app.use(express.methodOverride());                  // simulate DELETE and PUT
 });
 
 // define routes ==============================================================
-require('./app/routes')(app);
+require('./app/routes')(app, passport);
 
 // listen (start app with node server.js) ======================================
 app.listen(port);
