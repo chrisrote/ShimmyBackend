@@ -1,0 +1,24 @@
+body { 
+			padding-top:80px; 
+			background: transparent;
+		}
+		html {
+    		min-height: 100%;
+
+    		background:  url('../img/bg.jpg') 100% 100% no-repeat;
+
+    		-webkit-background-size: cover;
+    		background-size: cover;
+		}
+
+		h1, p {
+			color: rbg(0, 0, 0);
+		}
+
+		.lessWidth {
+  			width: 60%;
+  			margin-left:auto;
+			margin-right:auto;
+			background: rgba(255, 255, 255, 0.8);
+			border-radius:25px;
+		}
