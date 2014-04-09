@@ -26,50 +26,82 @@
 	<div class="container" style="padding-bottom: 40px;">
 		<div id="properties-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-left">
-				<form role="form" name="formData">  					
-  					<div class="form-group">
-    					<label for="nameField">Name *</label>
-    					<input type="text" class="form-control" id="nameField" placeholder="Enter Name" ng-model="formData.name" required>
+				<form name="formData" valid-submit="createProperty()" novalidate>  					
+  					<div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.nameField.$invalid,
+                    'has-success': formData.$submitted && formData.nameField.$valid}">
+    					  <label for="nameField">Name *</label>
+    					  <input type="text" class="form-control" name="nameField" id="nameField" placeholder="Enter Name" ng-model="formData.name" required autofocus></input>
+                <div class="alert alert-danger" ng-show="formData.$submitted && formData.nameField.$error.required">Name is required</div>
   					</div>
 
-  					<div class="form-group">
+  					<div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.addrField.$invalid,
+                    'has-success': formData.$submitted && formData.addrField.$valid}">
     					<label for="addrField">Address *</label>
-    					<input type="text" class="form-control" id="addrField" placeholder="Enter Address" ng-model="formData.address" required>
+    					<input type="text" class="form-control" id="addrField" name="addrField" placeholder="Enter Address" ng-model="formData.address" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.addrField.$error.required">Address is required</div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.cityField.$invalid,
+                    'has-success': formData.$submitted && formData.cityField.$valid}">
               <label for="cityField">City *</label>
-              <input type="text" class="form-control" id="cityField" placeholder="Enter City" ng-model="formData.city" required>
+              <input type="text" class="form-control" id="cityField" name="cityField" placeholder="Enter City" ng-model="formData.city" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.cityField.$error.required">City is required</div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.stateField.$invalid,
+                    'has-success': formData.$submitted && formData.stateField.$valid}">
               <label for="stateField">State *</label>
-              <input type="text" class="form-control" id="stateField" placeholder="Enter State" ng-model="formData.state" ng-minlength="2" ng-maxlength="2" required>
+              <input type="text" class="form-control" id="stateField" name="stateField" placeholder="Enter State" ng-model="formData.state" ng-minlength="2" ng-maxlength="2" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.stateField.$error.required">Please enter a 2 digit state code.</div>
             </div>
 
-  					<div class="form-group">
+  					<div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.bedField.$invalid,
+                    'has-success': formData.$submitted && formData.bedField.$valid}">
     					<label for="bedField">Bedrooms *</label>
-    					<input type="text" class="form-control" id="bedField" placeholder="Enter Bedrooms" ng-model="formData.numBeds" required>
+    					<input type="text" class="form-control" id="bedField" name="bedField" placeholder="Enter Bedrooms" ng-model="formData.numBeds" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.bedField.$error.required">Bedrooms is required</div>
             </div>
 
-  					<div class="form-group">
+  					<div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.bathField.$invalid,
+                    'has-success': formData.$submitted && formData.bathField.$valid}">
     					<label for="bathField">Bathrooms *</label>
-    					<input type="text" class="form-control" id="bathField" placeholder="Enter Bathrooms" ng-model="formData.numBaths" required>
+    					<input type="text" class="form-control" id="bathField" name="bathField" placeholder="Enter Bathrooms" ng-model="formData.numBaths" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.bathField.$error.required">Bathrooms is required</div>
             </div>
 
-  					<div class="form-group">
+  					<div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.descField.$invalid,
+                    'has-success': formData.$submitted && formData.descField.$valid}">
     					<label for="descField">Description</label>
-    					<textarea class="form-control" id="descField" ng-model="formData.description" srows="3"></textarea>
+    					<textarea class="form-control" id="descField" name="descField" ng-model="formData.description" srows="3"></textarea>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.descField.$error.required">Description is required</div>
   					</div>
 
-					  <button type="submit" class="btn btn-primary btn-lg" ng-click="createProperty(formData.$valid)">Submit Property</button> 
+
+					  <button type="submit" class="btn btn-primary btn-lg" ng-click="submitted=true">Submit Property</button> 
 				</form>
 			</div>
 		</div>
 	</div>
-
-
+  
   <style>
+
+    .form-group .alert {
+      padding: 0px;
+      margin-bottom: 0px;
+    }
+
+    .extra-info {
+        margin-top: 2em;
+        font-size: smaller;
+    }
+
     #footer {
       bottom: 0;
       width: 100%;

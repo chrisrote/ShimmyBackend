@@ -12,5 +12,6 @@ module.exports = mongoose.model('Property', {
 	longitude		: String,
 	neighborhood	: String,
 	imageURLs		: [String],
+	is_active		: Boolean,
 	availableDate	: Date
 });
