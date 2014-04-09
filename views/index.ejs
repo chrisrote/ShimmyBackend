@@ -5,13 +5,47 @@
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
 	<style>
-		body 		{ padding-top:80px; }
+		body { 
+			padding-top:80px; 
+			background: transparent;
+		}
+		html {
+    		min-height: 100%;
+
+    		background:  url('../img/bg.jpg') 100% 100% no-repeat;
+
+    		-webkit-background-size: cover;
+    		background-size: cover;
+		}
+
+		h1, p {
+			color: rbg(0, 0, 0);
+		}
+
+		.lessWidth {
+  			width: 60%;
+  			margin-left:auto;
+			margin-right:auto;
+			background: rgba(255, 255, 255, 0.8);
+			border-radius:25px;
+		}
+
 	</style>
 </head>
 <body>
-<div class="container">
+	
+	<div class="lessWidth jumbotron text-center">
+		<h1><span class="fa fa-home"></span> Shimmy Landlord</h1>
 
-	<div class="jumbotron text-center">
+		<p>Login or Register</p>
+
+		<a href="/login" class="btn btn-default"><span class="fa fa-user"></span>Login</a>
+		<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Signup</a>
+	</div>
+	<!-- 
+<div class="container" style="background: transparent">
+
+	<div class="jumbotron text-center" style="background: transparent">
 		<h1><span class="fa fa-home"></span> Shimmy Landlord</h1>
 
 		<p>Login or Register</p>
@@ -20,6 +54,6 @@
 		<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Signup</a>
 	</div>
 
-</div>
+</div> -->
 </body>
 </html>
