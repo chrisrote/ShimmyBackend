@@ -38,6 +38,14 @@ app.configure(function() {
   	app.use(express.methodOverride());                  // simulate DELETE and PUT
 });
 
+app.configure('development', function()
+{  	app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+});
+
+app.configure('production', function(){
+  	app.use(express.errorHandler()); 
+});
+
 // define routes ==============================================================
 require('./app/routes')(app, passport);
 

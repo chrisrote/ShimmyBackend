@@ -12,7 +12,7 @@ var prop_api = require('./apis/prop_api'),
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
 
-	// GET ALL PROPERTies ====================================================
+	// GET ALL PROPERTIES =====================================================
 	app.get('/api/property', prop_api.getAllProperties);
 
 	// CREATE PROPERTY ========================================================
@@ -22,22 +22,20 @@ module.exports = function(app, passport) {
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', prop_api.deleteProperty);
 
-	
-	// =====================================
-	// HOME PAGE (with login links) ========
-	// =====================================
+	//
+
+
+	// HOME PAGE (with login links) ===========================================
 	app.get('/', function(req, res) {
 		res.render('index.ejs'); // load the index.ejs file
 	});
 
-	// =====================================
-	// LOGIN ===============================
-	// =====================================
+	// LOGIN ==================================================================
 	// show the login form
 	app.get('/login', function(req, res) {
 
 		// render the page and pass in any flash data if it exists
-		res.render('login.ejs', { message: req.flash('loginMessage') }); 
+		res.render('login.ejs', { message: req.flash('loginMessage') });
 	});
 
 	// process the login form
@@ -93,7 +91,7 @@ module.exports = function(app, passport) {
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
-	// if user is authenticated in the session, carry on 
+	// if user is authenticated in the session, carry on
 	if (req.isAuthenticated())
 		return next();
 

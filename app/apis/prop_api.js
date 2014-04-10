@@ -1,6 +1,9 @@
 var Property = require('../models/property');
 var https = require('https');
 
+
+// ===================================================
+// CREATE NEW PROPERTY FROM UI
 exports.createProperties = function(req, res) {
 	// Callout to Google Geocoding API
 	var geocode_API_key = 'AIzaSyCa5lOnYd8klc02w9Up2mETb-uPwou-adg';
@@ -26,29 +29,30 @@ exports.createProperties = function(req, res) {
 		google_res.on('data', function(chunk) {
 			my_result += chunk;
 		});
-		
+
 		google_res.on('end', function() {
 			var parsedJSON = JSON.parse(my_result);
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
-			
+
 			Property.create({
-				name 		: req.body.name,
-				address		: req.body.address,
-				description	: req.body.description,
-				num_beds	: req.body.numBeds,
-				num_baths	: req.body.numBaths,
-				latitude	: latitude,
-				longitude	: longitude
+				name 				 : req.body.name,
+				address			 : req.body.address,
+				description	 : req.body.description,
+				num_beds			: req.body.numBeds,
+				num_baths	   : req.body.numBaths,
+				imageURLs 		: ['https://s3.amazonaws.com/Shimmy/apartments/default_apt.png'],
+				latitude	    : latitude,
+				longitude	 	: longitude
 			}, function(err, property) {
 				if(err) res.send(err);
-				
+
 				Property.find(function(err, properties) {
 					if(err) res.send(err);
 					console.log('A TOTAL OF ' + properties.length + ' properties');
 					res.json(properties);
 				});
-			}); 
+			});
 		});
 	});
 
@@ -58,14 +62,22 @@ exports.createProperties = function(req, res) {
 	google_req.end();
 };
 
-exports.getAllProperties = function(req, res) {
+exports.updateProperty = function(req, res) {
 
+};
+
+// ===================================================
+// GET ALL PROPERTIES METHOD
+exports.getAllProperties = function(req, res) {
 	Property.find(function(err, properties) {
 		if(err) res.send(err);
 		res.json(properties);
 	});
 };
 
+
+// ===================================================
+// DELETE METHOD
 exports.deleteProperty = function(req, res) {
 	Property.remove({
 		_id : req.params.property_id
