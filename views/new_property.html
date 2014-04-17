@@ -10,7 +10,7 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
-  <script type="text/javascript" src="/core.js"></script>
+  <script type="text/javascript" src="/new_property.js"></script>
 </head>
 
 <!-- SET THE CONTROLLER AND GET ALL properties -->
@@ -26,7 +26,7 @@
 	<div class="container" style="padding-bottom: 40px;">
 		<div id="properties-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-left">
-				<form name="formData" valid-submit="createProperty()" novalidate>  					
+				<form name="formData" valid-submit="createProperty()" novalidate>
   					<div class="form-group clearfix" ng-class="{
                     'has-error': formData.$submitted && formData.nameField.$invalid,
                     'has-success': formData.$submitted && formData.nameField.$valid}">
@@ -84,12 +84,12 @@
   					</div>
 
 
-					  <button type="submit" class="btn btn-primary btn-lg" ng-click="submitted=true">Submit Property</button> 
+					  <button type="submit" class="btn btn-primary btn-lg" ng-click="submitted=true">Submit Property</button>
 				</form>
 			</div>
 		</div>
 	</div>
-  
+
   <style>
 
     .form-group .alert {

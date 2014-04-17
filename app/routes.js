@@ -16,19 +16,18 @@ module.exports = function(app, passport) {
 	app.get('/api/property', prop_api.getAllProperties);
 
 	// CREATE PROPERTY ========================================================
-	app.post('/api/property', prop_api.createProperties);
+	app.post('/api/property', isLoggedIn, prop_api.createProperties);
 
 
 	// DELETE PROPERTY ========================================================
-	app.delete('/api/property/:property_id', prop_api.deleteProperty);
-
-	//
-
+	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
 
 	// HOME PAGE (with login links) ===========================================
 	app.get('/', function(req, res) {
 		res.render('index.ejs'); // load the index.ejs file
 	});
+
+
 
 	// LOGIN ==================================================================
 	// show the login form
