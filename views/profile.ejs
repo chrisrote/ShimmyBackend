@@ -4,6 +4,8 @@
 	<title>Shimmy - Home</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<script type="text/javascript" src="/profile.js"></script>
+
 	<style>
 		body 		{ padding-top:80px; word-wrap:break-word; }
 	</style>
@@ -13,15 +15,28 @@
 
 	<div class="page-header text-center">
 		<h1><span class="fa fa-anchor"></span> Shimmy Landlord </h1>
+		<br/>
+		<a href="/new_property" class="btn btn-success btn-sm">List New Property</a>
 		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
 	</div>
 
 	<div class="row">
-		<a href="/new_property" class="btn btn-default btn-sm">List New Property</a>
-	</div>
-
-	<div class="row">
 		<h1>My Properties</h1>
+
+		<div class="table-responsive">
+  			<table class="table">
+    			<tbody>  
+    				<% for(var i=0; i < myProps.length; i++) { %>
+          			<tr>  
+          				<td><img src=<%= myProps[i].imageURLs[0] %> class="img-responsive" style="max-height: 70px;" alt="" title=""></td>
+            			<td><%= myProps[i].name %></td>  
+            			<td><%= myProps[i].address %></td>  
+            			<td><%= myProps[i].price %></td>  
+          			</tr>
+          			<% } %>
+          		</tbody> 
+  			</table>
+		</div>
 	</div>
 
 </div>

@@ -5,9 +5,7 @@ var crypto = require('crypto');
 var path = require('path');
 
 var prop_api = require('./apis/prop_api'),
-	aws = require('./apis/aws'),
-	auth_api = require('./apis/auth_api');
-    //index = require('./controllers'),
+	aws = require('./apis/aws');   
 
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
@@ -18,7 +16,6 @@ module.exports = function(app, passport) {
 	// CREATE PROPERTY ========================================================
 	app.post('/api/property', isLoggedIn, prop_api.createProperties);
 
-
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
 
@@ -27,13 +24,20 @@ module.exports = function(app, passport) {
 		res.render('index.ejs'); // load the index.ejs file
 	});
 
+	app.get('/new_property', isLoggedIn, function(req, res) {
+		res.render('new_property.ejs', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
+
+
+	// ========================================================================
+	// AUTHENTICATION METHODS
+	// ========================================================================
 
 
 	// LOGIN ==================================================================
-	// show the login form
 	app.get('/login', function(req, res) {
-
-		// render the page and pass in any flash data if it exists
 		res.render('login.ejs', { message: req.flash('loginMessage') });
 	});
 
@@ -44,13 +48,8 @@ module.exports = function(app, passport) {
 		failureFlash : true // allow flash messages
 	}));
 
-	// =====================================
 	// SIGNUP ==============================
-	// =====================================
-	// show the signup form
 	app.get('/signup', function(req, res) {
-
-		// render the page and pass in any flash data if it exists
 		res.render('signup.ejs', { message: req.flash('signupMessage') });
 	});
 
@@ -61,26 +60,21 @@ module.exports = function(app, passport) {
 		failureFlash : true // allow flash messages
 	}));
 
-	// =====================================
-	// PROFILE SECTION =====================
-	// =====================================
-	// we will want this protected so you have to be logged in to visit
-	// we will use route middleware to verify this (the isLoggedIn function)
+	// RENDER THE PROFILE PAGE IF LOGGED IN ==================
 	app.get('/profile', isLoggedIn, function(req, res) {
-		res.render('profile.ejs', {
-			user : req.user // get the user out of session and pass to template
+		// get all properties by user id
+		console.log('my landlord id: ' + req.user._id);
+		Property.find({ 'landlord_id' : req.user._id}, function(err, properties) {
+			console.log('got properties: ' + properties);
+			if(err) res.send(err);
+			res.render('profile.ejs', {
+				user 		: req.user,
+				myProps 	: properties
+			});
 		});
 	});
 
-	app.get('/new_property', isLoggedIn, function(req, res) {
-		res.sendfile('./views/new_property.html', {
-			user : req.user // get the user out of session and pass to template
-		});
-	});
-
-	// =====================================
-	// LOGOUT ==============================
-	// =====================================
+	// LOGOUT ================================================
 	app.get('/logout', function(req, res) {
 		req.logout();
 		res.redirect('/');

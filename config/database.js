@@ -1,5 +1,5 @@
 module.exports = {
 	var url = process.env.MONGOLAB_URI ||
 				process.env.MONGOHQ_URL ||
-				'mongodb://localhost/27017/test';
+				'mongodb://th:Shimmy@ds053638.mongolab.com:53638/shimmy';
 };

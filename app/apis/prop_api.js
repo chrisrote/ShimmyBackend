@@ -1,6 +1,6 @@
-var Property = require('../models/property');
-var https = require('https');
-
+var Property 			= require('../models/property');
+var PropertyJunction 	= require('../models/property_junction');
+var https 				= require('https');
 
 // ===================================================
 // CREATE NEW PROPERTY FROM UI
@@ -35,15 +35,18 @@ exports.createProperties = function(req, res) {
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
 
+			console.log('my user: ' + req.body.user);
 			Property.create({
-				name 				 : req.body.name,
-				address			 : req.body.address,
-				description	 : req.body.description,
-				num_beds			: req.body.numBeds,
-				num_baths	   : req.body.numBaths,
+				name 			: req.body.name,
+				price			: req.body.price,
+				address		 	: req.body.address,
+				description	 	: req.body.description,
+				num_beds		: req.body.numBeds,
+				num_baths	   	: req.body.numBaths,
 				imageURLs 		: ['https://s3.amazonaws.com/Shimmy/apartments/default_apt.png'],
 				latitude	    : latitude,
-				longitude	 	: longitude
+				longitude	 	: longitude,
+				landlord_id		: req.body.user
 			}, function(err, property) {
 				if(err) res.send(err);
 
@@ -62,19 +65,29 @@ exports.createProperties = function(req, res) {
 	google_req.end();
 };
 
+
+// ===================================================
+// Get all properties for the email address entered by
+// the user. Do not return properties that already have
+// a property junction created
+exports.getPropertiesForUserEmail = function(req, res) {
+	
+}
+
+// ===================================================
+// Update Property
 exports.updateProperty = function(req, res) {
 
 };
 
 // ===================================================
-// GET ALL PROPERTIES METHOD
+// GET ALL PROPERTIES METHOD -- Testing purposes
 exports.getAllProperties = function(req, res) {
 	Property.find(function(err, properties) {
 		if(err) res.send(err);
 		res.json(properties);
 	});
 };
-
 
 // ===================================================
 // DELETE METHOD

@@ -7,8 +7,8 @@ var landlordSchema = mongoose.Schema({
     local            : {
         email        : String,
         password     : String,
-        phone		 : String,
-        city		 : String
+        phone		    : String,
+        city		     : String
     }
 
 });

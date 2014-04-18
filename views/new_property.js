@@ -1,25 +1,29 @@
 var shimmy = angular.module('shimmy', []);
-console.log('loading shimmy core.js');
 
-function mainController($scope, $http) {
+/*
+shimmy.config(function ($routeProvider) {
+  $routeProvider
+    .when('/submitted',
+    {
+      redirectTo : '/'
+    }
+  )
+});*/
+
+
+function mainController($scope, $http, $location, $window) {
 	$scope.formData = {};
-
-	// when landing on the page, get all property and show them
-	$http.get('/api/property')
-		.success(function(data) {
-			$scope.properties = data;
-		})
-		.error(function(data) {
-			console.log('Error: ' + data);
-		});
+	$scope.userId = window.myUser;
 
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
+		console.log('scope userid: ' + $scope.userId);
+
+		$scope.formData['user'] = $scope.userId;
+		console.log('my form data: ' + JSON.stringify($scope.formData));
 		$http.post('/api/property', $scope.formData)
 			.success(function(data){
-				$scope.formData = {};	// Clear the form to the user can input another
-				$scope.properties = data;
-				alert('Property submitted successfully.');
+				$window.location.href = '/profile';
 			})
 			.error(function(data){
                 alert('we got an error: ' + data);

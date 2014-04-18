@@ -7,10 +7,11 @@
 	<title>Shimmy - Create Property</title>
 
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
   <script type="text/javascript" src="/new_property.js"></script>
+  <script>myUser="<%=user._id%>";</script>
+
 </head>
 
 <!-- SET THE CONTROLLER AND GET ALL properties -->
@@ -34,6 +35,14 @@
     					  <input type="text" class="form-control" name="nameField" id="nameField" placeholder="Enter Name" ng-model="formData.name" required autofocus></input>
                 <div class="alert alert-danger" ng-show="formData.$submitted && formData.nameField.$error.required">Name is required</div>
   					</div>
+
+            <div class="form-group clearfix" ng-class="{
+                    'has-error': formData.$submitted && formData.thePrice.$invalid,
+                    'has-success': formData.$submitted && formData.thePrice.$valid}">
+              <label for="thePrice">Price/Month *</label>
+              <input type="text" class="form-control" id="thePrice" name="thePrice" placeholder="Enter Price" ng-model="formData.price" required>
+              <div class="alert alert-danger" ng-show="formData.$submitted && formData.thePrice.$error.required">Price is required</div>
+            </div>
 
   					<div class="form-group clearfix" ng-class="{
                     'has-error': formData.$submitted && formData.addrField.$invalid,

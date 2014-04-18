@@ -7,11 +7,12 @@ module.exports = mongoose.model('Property', {
 	description		: String,
 	num_beds		: Number,
 	num_baths		: Number,
-	price			: Number, 
+	price			: Number,
 	latitude		: String,
 	longitude		: String,
 	neighborhood	: String,
 	imageURLs		: [String],
-	is_active		: Boolean,
+	is_rented		: Boolean,
+	landlord_id		: mongoose.Schema.Types.ObjectId,
 	availableDate	: Date
 });
