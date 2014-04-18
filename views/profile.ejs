@@ -4,7 +4,6 @@
 	<title>Shimmy - Home</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-	<script type="text/javascript" src="/profile.js"></script>
 
 	<style>
 		body 		{ padding-top:80px; word-wrap:break-word; }
@@ -32,13 +31,31 @@
             			<td><%= myProps[i].name %></td>  
             			<td><%= myProps[i].address %></td>  
             			<td><%= myProps[i].price %></td>  
+            			<td>
+            				<% if(myProps[i].is_rented) { %>
+            					Rented
+            				<% } else { %>
+            					<p style="color:green;">Vacant</p>
+            				<% } %>
+            			</td>
+            			<td> 
+            				<button type="button" class="editButton btn btn-default btn-sm" data-product-id=<%= i %>>
+  								<span class="glyphicon glyphicon-edit"></span> Edit Property
+							</button>
+            				<button type="button" class="deleteButton btn btn-default btn-sm" data-product-id=<%= i %>>
+  								<span class="glyphicon glyphicon-trash"></span> Delete Property
+							</button>
+						</td>
           			</tr>
           			<% } %>
           		</tbody> 
   			</table>
 		</div>
 	</div>
-
 </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="/profile.js"></script>
+
 </body>
 </html>

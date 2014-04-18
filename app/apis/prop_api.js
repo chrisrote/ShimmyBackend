@@ -35,7 +35,6 @@ exports.createProperties = function(req, res) {
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
 
-			console.log('my user: ' + req.body.user);
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
@@ -43,6 +42,7 @@ exports.createProperties = function(req, res) {
 				description	 	: req.body.description,
 				num_beds		: req.body.numBeds,
 				num_baths	   	: req.body.numBaths,
+				is_rented		: false,
 				imageURLs 		: ['https://s3.amazonaws.com/Shimmy/apartments/default_apt.png'],
 				latitude	    : latitude,
 				longitude	 	: longitude,
