@@ -1,16 +1,5 @@
 var shimmy = angular.module('shimmy', []);
 
-/*
-shimmy.config(function ($routeProvider) {
-  $routeProvider
-    .when('/submitted',
-    {
-      redirectTo : '/'
-    }
-  )
-});*/
-
-
 function mainController($scope, $http, $location, $window) {
 	$scope.formData = {};
 	$scope.userId = window.myUser;

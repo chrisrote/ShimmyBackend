@@ -20,41 +20,29 @@
 	</div>
 
 	<div class="row">
-		<h1>My Properties</h1>
-
-		<div class="table-responsive">
-  			<table class="table">
-    			<tbody>  
-    				<% for(var i=0; i < myProps.length; i++) { %>
-          			<tr>  
-          				<td><img src=<%= myProps[i].imageURLs[0] %> class="img-responsive" style="max-height: 70px;" alt="" title=""></td>
-            			<td><%= myProps[i].name %></td>  
-            			<td><%= myProps[i].address %></td>  
-            			<td><%= myProps[i].price %></td>  
-            			<td>
-            				<% if(myProps[i].is_rented) { %>
-            					Rented
-            				<% } else { %>
-            					<p style="color:green;">Vacant</p>
-            				<% } %>
-            			</td>
-            			<td> 
-            				<button type="button" class="editButton btn btn-default btn-sm" data-product-id=<%= i %>>
-  								<span class="glyphicon glyphicon-edit"></span> Edit Property
-							</button>
-            				<button type="button" class="deleteButton btn btn-default btn-sm" data-product-id=<%= i %>>
-  								<span class="glyphicon glyphicon-trash"></span> Delete Property
-							</button>
-						</td>
-          			</tr>
-          			<% } %>
-          		</tbody> 
-  			</table>
-		</div>
+		<h1>My Properties (<%= myProps.length %>)</h1>
+		<div class="bb-alert alert alert-info" style="display:none;">
+        	<span>The examples populate this alert with dummy content</span>
+    </div>
+		<%- include landlord_props.ejs %>
 	</div>
 </div>
 
+
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/bootbox.js"></script>
+<script src="/js/displayCallback.js"></script>
+
+<script>
+        $(function() {
+            displayCallback.init({
+                "selector": ".bb-alert"
+            });
+        });
+    </script>
+
 <script type="text/javascript" src="/profile.js"></script>
 
 </body>
