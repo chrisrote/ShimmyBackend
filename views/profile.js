@@ -29,13 +29,15 @@ $('.deleteButton').click(function(){
         		cache: false,
         		timeout: 5000,
         		success: function(data) {
-        			console.log('myProps BEFORE: ' + JSON.stringify(myProps));
-        			myProps = data;
-        			console.log('myProps AFTER: ' + JSON.stringify(myProps));
+                    console.log('my data: ' + JSON.stringify(data));
+                    //var html = new EJS({url: 'landlord_props.ejs'}).render(data);
+
+                    // add HTML to the DOM using a <div id="container"></div> wrapper.
+                    //document.getElementById("table").innerHTML = html;
             		displayCallback.show("Property Successfully Deleted.");
+                    location.reload();
         		}, 
         		error: function(jqXHR, textStatus, errorThrown) {
-            		alert('error ' + textStatus + " " + errorThrown);
         		}
     		});
 	      }

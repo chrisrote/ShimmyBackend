@@ -35,6 +35,7 @@ exports.createProperties = function(req, res) {
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
 
+			console.log('landlord_id: ' + req.body.user);
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
