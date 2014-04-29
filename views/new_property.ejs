@@ -29,10 +29,11 @@
 </head>
 
   <body ng-app="shimmy">
+    <% include partials/navbar.ejs %>
+    <br/><br/><br/>
     <div class="container" >
       <div class="row">
         <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-          <h1>Enter New Property Details</h1>
           <div ng-controller="mainController" 
                rc-wizard="propertyWizard" rc-disabled="rc.firstForm.submitInProgress">
             <ul class="nav rc-nav-wizard">
@@ -51,7 +52,7 @@
               <li>
                 <a href="#last" data-toggle="tab">
                   <span class="badge">3</span>
-                  <span>Review</span>
+                  <span>Image Upload</span>
                 </a>
               </li>
             </ul>

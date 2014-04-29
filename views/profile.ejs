@@ -10,20 +10,11 @@
 	</style>
 </head>
 <body>
+<% include partials/navbar.ejs %>
 <div class="container">
-
-	<div class="page-header text-center">
-		<h1><span class="fa fa-anchor"></span> Shimmy Landlord </h1>
-		<br/>
-		<a href="/new_property" class="btn btn-success btn-sm">List New Property</a>
-		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
-	</div>
-
 	<div class="row">
-		<h1>My Properties (<%= myProps.length %>)</h1>
-		<div class="bb-alert alert alert-info" style="display:none;">
-        	<span>The examples populate this alert with dummy content</span>
-   		</div>
+		<h1>My Properties (<%= myProps.length %>) <a href="/new_property" class="btn btn-success btn-sm">List New Property</a></h1>
+
 		<%- include landlord_props.ejs %>
 	</div>
 </div>
