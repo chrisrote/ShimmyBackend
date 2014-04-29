@@ -78,7 +78,7 @@ exports.propertyRentalStatusChanged = function(req, res) {
 };
 
 // ===================================================
-// Update Property
+// Update Property Images
 exports.updatePropertyImages = function(req, res) {
 	var query = { _id : req.params.property_id };
 	var myImages = [];
@@ -95,19 +95,6 @@ exports.updatePropertyImages = function(req, res) {
 		console.log('affected rows: %d', affected);
 		res.send('success');
 	});
-	/*
-	Property.find({'_id': req.params.property_id }, function(err, properties) {
-		if(err) res.send(err);
-		var aProperty = new Property(properties[0]);
-		aProperty.imageURLs = req.body['imageArr'];
-		aProperty.update(function(err) {
-			if(err) {
-				console.log('we got an error: ' + JSON.stringify(err));
-				res.send(err);
-			}
-			res.send(aProperty);
-		});
-	});*/
 };
 
 exports.propertyById = function(req, res) {
