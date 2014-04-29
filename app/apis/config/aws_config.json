@@ -1,6 +1,6 @@
 {
-  "accessKeyId": "AKIAIV4WCTP6XT5FSZWA",
-  "secretAccessKey": "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",
+  "accessKeyId": "xxxx",
+  "secretAccessKey": "xxx",
   "region": "us-west-2",
   "bucket": "shimmy-assets-tyler"
 }
