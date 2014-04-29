@@ -6,6 +6,10 @@ var AWS = require('aws-sdk'),
     createS3Policy,
     getExpiryTime;
 
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || config.accessKeyId;
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || config.secretAccessKey;
+var S3_BUCKET = process.env.S3_BUCKET || config.bucket;
+
 getExpiryTime = function () {
     var _date = new Date();
     return '' + (_date.getFullYear()) + '-' + (_date.getMonth() + 1) + '-' +
@@ -18,7 +22,7 @@ createS3Policy = function(contentType, callback) {
         'expiration': getExpiryTime(),
         'conditions': [
             ['starts-with', '$key', 'shimmy-assets/'],
-            {'bucket': config.bucket},
+            {'bucket': S3_BUCKET},
             {'acl': 'public-read'},
             ['starts-with', '$Content-Type', contentType],
             {'success_action_status' : '201'}
@@ -30,14 +34,14 @@ createS3Policy = function(contentType, callback) {
     var base64Policy = new Buffer(stringPolicy, 'utf-8').toString('base64');
 
     // sign the base64 encoded policy
-    var signature = crypto.createHmac('sha1', config.secretAccessKey)
+    var signature = crypto.createHmac('sha1', AWS_SECRET_KEY)
                         .update(new Buffer(base64Policy, 'utf-8')).digest('base64');
 
     // build the results object
     var s3Credentials = {
         s3Policy: base64Policy,
         s3Signature: signature,
-        AWSAccessKeyId: config.accessKeyId
+        AWSAccessKeyId: AWS_ACCESS_KEY
     };
 
     // send it back
@@ -57,7 +61,7 @@ exports.getS3Policy = function(req, res) {
 exports.getClientConfig = function (req, res, next) {
     return res.json(200, {
         awsConfig: {
-            bucket: config.bucket
+            bucket: S3_BUCKET
         }
     });
 };
