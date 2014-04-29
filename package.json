@@ -16,7 +16,8 @@
     "passport-local" : "~0.1.6",
     "connect-flash" : "~0.1.1",
     "winston": "0.6.x",
-    "bcrypt-nodejs" : "latest"
+    "bcrypt-nodejs" : "latest",
+    "angular-wizard": "latest"
   },
   "devDependencies": {
     "supertest": "0.5.x",

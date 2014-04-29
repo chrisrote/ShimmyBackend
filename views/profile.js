@@ -1,6 +1,6 @@
 $('.editButton').click(function(){             
-    var prod_id = $(this).data('productId')
-    alert(prod_id);
+    var prop_id = $(this).data('productId')
+    window.location.href = '/edit_property/' + prop_id;
 });
 
 $('.deleteButton').click(function(){             
@@ -44,9 +44,5 @@ $('.deleteButton').click(function(){
 	    }
 	  }
 	});
-
-    /*bootbox.confirm("Are you sure you want to delete this property?", function(result) {
-    	console.log('result is: ' + result);
-	}); */
 });
 

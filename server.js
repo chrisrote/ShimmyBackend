@@ -5,10 +5,7 @@ var app     		= express();
 var mongoose  		= require('mongoose');
 var passport 		= require('passport');
 var flash 	 		= require('connect-flash');
-var AWS 			= require('aws-sdk');
 
-
-AWS.config.loadFromPath('./app/config/aws.json');
 
 // configuration ===============================================================
 var url = process.env.MONGOLAB_URI ||
@@ -18,6 +15,9 @@ var port = Number(process.env.PORT || 5000);
 
 mongoose.connect(url);
 require('./config/passport')(passport); // pass passport for configuration
+
+var AWS = require('aws-sdk');
+AWS.config.loadFromPath('./app/apis/config/aws_config.json');
 
 app.configure(function() {
 
@@ -29,7 +29,7 @@ app.configure(function() {
   	app.set('view engine', 'ejs');
 
 	// required for passport
-	app.use(express.session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+	app.use(express.session({ secret: 'thisisshimmy' })); // session secret
 	app.use(passport.initialize());
 	app.use(passport.session()); // persistent login sessions
 	app.use(flash());

@@ -5,16 +5,32 @@ var crypto = require('crypto');
 var path = require('path');
 
 var prop_api = require('./apis/prop_api'),
-	aws = require('./apis/aws');   
+	aws_api = require('./apis/aws_api');   
 
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
 
+	// ========================================================================
+	// PROPERTY METHODS
+	// ========================================================================
+
+	// POST DATA TO CREATE PROPERTY JUNCTIONS =================================
+	app.post('/api/property_junctions', prop_api.postPropJunctions);
+
 	// GET ALL PROPERTIES =====================================================
 	app.get('/api/property', prop_api.getAllProperties);
 
+	// GET PROPERTY BY ID ====================================================
+	app.get('/api/propertyById', isLoggedIn, prop_api.getPropertyById);
+
 	// CREATE PROPERTY ========================================================
 	app.post('/api/property', isLoggedIn, prop_api.createProperties);
+
+	// SET PROPERTY TO RENTED OR VACANT =======================================
+	app.put('/api/rentalStatus/:rentStatus', isLoggedIn, prop_api.propertyRentalStatusChanged);
+
+	// UPDATE THE PROPERTY IMAGE ARRAY ========================================
+	app.put('/api/updatePropertyImages', isLoggedIn, prop_api.updatePropertyImages);
 
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
@@ -30,11 +46,20 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.get('/edit_property/:property_id', isLoggedIn, function(req, res){
+		res.render('edit_property.ejs');
+	});
+
+	// ========================================================================
+	// AMAZON S3 POLICY 
+	// ========================================================================
+
+	app.get('/api/s3Policy', aws_api.getS3Policy);
+	app.get('/api/config', aws_api.getClientConfig);
 
 	// ========================================================================
 	// AUTHENTICATION METHODS
 	// ========================================================================
-
 
 	// LOGIN ==================================================================
 	app.get('/login', function(req, res) {
@@ -63,9 +88,7 @@ module.exports = function(app, passport) {
 	// RENDER THE PROFILE PAGE IF LOGGED IN ==================
 	app.get('/profile', isLoggedIn, function(req, res) {
 		// get all properties by user id
-		console.log('my landlord id: ' + req.user._id);
 		Property.find({ 'landlord_id' : req.user._id}, function(err, properties) {
-			console.log('got properties: ' + properties);
 			if(err) res.send(err);
 			res.render('profile.ejs', {
 				user 		: req.user,

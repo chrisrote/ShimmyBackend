@@ -7,7 +7,7 @@ var https 				= require('https');
 exports.createProperties = function(req, res) {
 	// Callout to Google Geocoding API
 	var geocode_API_key = 'AIzaSyCa5lOnYd8klc02w9Up2mETb-uPwou-adg';
-	var addr = req.body.address.split(' ').join('+');
+	var addr = req.body.street.split(' ').join('+');
 	var city = req.body.city.split(' ').join('+');
 	var state = req.body.state.split(' ').join('+');
 	var full_addr = addr + ',+' + city + ',+' + state;
@@ -35,11 +35,10 @@ exports.createProperties = function(req, res) {
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
 
-			console.log('landlord_id: ' + req.body.user);
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
-				address		 	: req.body.address,
+				address		 	: req.body.street,
 				description	 	: req.body.description,
 				num_beds		: req.body.numBeds,
 				num_baths	   	: req.body.numBaths,
@@ -51,11 +50,7 @@ exports.createProperties = function(req, res) {
 			}, function(err, property) {
 				if(err) res.send(err);
 
-				Property.find(function(err, properties) {
-					if(err) res.send(err);
-					console.log('A TOTAL OF ' + properties.length + ' properties');
-					res.json(properties);
-				});
+				res.send(property);
 			});
 		});
 	});
@@ -72,13 +67,45 @@ exports.createProperties = function(req, res) {
 // the user. Do not return properties that already have
 // a property junction created
 exports.getPropertiesForUserEmail = function(req, res) {
+	var filters = req.params.filters;
+
+};
+
+// ===================================================
+// Update a property to rented
+exports.propertyRentalStatusChanged = function(req, res) {
 	
-}
+};
 
 // ===================================================
 // Update Property
-exports.updateProperty = function(req, res) {
+exports.updatePropertyImages = function(req, res) {
+	Property.find({'_id': req.prop_id}, function(err, property) {
+		if(err) res.send(err);
+		property.imageURLs = req.body.myImages;
+		property.save(function(err) {
+			if(err) res.send(err);
+			res.send(property);
+		});
+	});
+};
 
+exports.getPropertyById = function(req, res) {
+	Property.find({'_id': req.prop_id}, function(err, property) {
+		if(err) res.send(err);
+		res.send(property);
+	});
+};
+
+// ===================================================
+// Receive property junctions
+exports.postPropJunctions = function(req, res) {
+	var email = req.params.user-email;
+	var phone = req.params.phone;
+
+	// ============================================================
+	// SEE HOW TO MASS INSERT RECORDS MONGODB!!!!!
+	// ============================================================
 };
 
 // ===================================================
@@ -91,16 +118,20 @@ exports.getAllProperties = function(req, res) {
 };
 
 // ===================================================
-// DELETE METHOD
+// DELETE ALL PROPERTIES AND PROPERTY JUNCTIONS
 exports.deleteProperty = function(req, res) {
-	Property.remove({
-		_id : req.params.property_id
+	PropertyJunction.remove({
+		PropertyId : req.params.property_id
 	}, function(err, property) {
-		if(err) res.send(err);
-
-		Property.find(function(err, properties) {
+		Property.remove({
+			_id : req.params.property_id
+		}, function(err, property) {
 			if(err) res.send(err);
-			res.json(properties);
+
+			Property.find(function(err, properties) {
+				if(err) res.send(err);
+				res.json(properties);
+			});
 		});
 	});
 };

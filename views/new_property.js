@@ -1,51 +1,115 @@
-var shimmy = angular.module('shimmy', []);
+var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
+  .run(function ($rootScope, $location, $http) {
 
-function mainController($scope, $http, $location, $window) {
-	$scope.formData = {};
+    $http.get('/api/config').success(function(config) {
+        $rootScope.config = config;
+      });
+  });
+
+//var xml2json = require('./xml2json');
+
+function mainController($scope, $http, $location, $window, $q, $timeout, $upload, $rootScope) {
+	$scope.new_property = {};
 	$scope.userId = window.myUser;
+	$scope.propertyId;
+	$scope.imageUploads = [];
+    
+    $scope.abort = function(index) {
+        $scope.upload[index].abort();
+        $scope.upload[index] = null;
+    };
+
+
+	// =========================================================
+	// CALL THE BACKEND TO GET THE AMAZON S3 POLICY
 
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
-		console.log('scope userid: ' + $scope.userId);
-
-		$scope.formData['user'] = $scope.userId;
-		console.log('my form data: ' + JSON.stringify($scope.formData));
-		$http.post('/api/property', $scope.formData)
+		$scope.new_property['user'] = $scope.userId;
+		$http.post('/api/property', $scope.new_property)
 			.success(function(data){
-				$window.location.href = '/profile';
+				$scope.propertyId = data._id;
 			})
 			.error(function(data){
-                alert('we got an error: ' + data);
 				console.log('Error: ' + data);
 			});
 	};
+
+	$scope.saveState = function() {
+	    var deferred = $q.defer();
+	    
+	    $timeout(function() {
+	      deferred.resolve();
+	    }, 2000);
+	    
+	    return deferred.promise;
+  	};
+
+
+  	$scope.completeProperty = function() {
+      var imagesToUpload = {};
+      imagesToUpload['myImages'] = $scope.imageUploads;
+      console.log('myImages: ' + JSON.stringify(imagesToUpload));
+  		$http.get('/api/propertyById', $scope.propertyId)
+  			.success(function(data) {
+  				console.log('my image uploads: ' + JSON.stringify(imageUploads));
+  				$http.post('/api/updatePropertyImages', imagesToUpload)
+  					.success(function(data){
+  						$window.location.href = '/profile';
+  					})
+  					.error(function(data) {
+  						alert('There was an error. Please contact admin@shimmylandlord.com for assistance');
+  					})
+  			})
+  			.error(function(data) {
+  				console.log('Error: ' + data);
+  			})
+  	};
+
+	$scope.onFileSelect = function ($files) {
+            $scope.files = $files;
+            $scope.upload = [];
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                file.progress = parseInt(0);
+                (function (file, i) {
+                    $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
+                        var s3Params = response;
+                        $scope.upload[i] = $upload.upload({
+                            url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
+                            method: 'POST',
+                            data: {
+                                'key' : 'shimmy-assets-tyler/'+ Math.round(Math.random()*10000) + '$$' + file.name,
+                                'acl' : 'public-read',
+                                'Content-Type' : file.type,
+                                'AWSAccessKeyId': s3Params.AWSAccessKeyId,
+                                'success_action_status' : '201',
+                                'Policy' : s3Params.s3Policy,
+                                'Signature' : s3Params.s3Signature
+                            },
+                            file: file,
+                        }).then(function(response) {
+                            file.progress = parseInt(100);
+                            if (response.status === 201) {
+                                var data = xml2json.parser(response.data),
+                                parsedData;
+                                parsedData = {
+                                    location: data.postresponse.location,
+                                    bucket: data.postresponse.bucket,
+                                    key: data.postresponse.key,
+                                    etag: data.postresponse.etag
+                                };
+                                $scope.imageUploads.push(parsedData);
+
+                            } else {
+                                alert('Upload Failed');
+                            }
+                        }, null, function(evt) {
+                            file.progress =  parseInt(100.0 * evt.loaded / evt.total);
+                        });
+                    });
+                }(file, i));
+            }
+        };
 }
 
-// directive that prevents submit if there are still form errors
-shimmy.directive('validSubmit', [ '$parse', function($parse) {
-		return {
-			// we need a form controller to be on the same element as this directive
-			// in other words: this directive can only be used on a form
-			require: 'form',
-			// one time action per form
-			link: function(scope, element, iAttrs, form) {
-				form.$submitted = false;
-				// get a hold of the function that handles submission when form is valid
-				var fn = $parse(iAttrs.validSubmit);
-				
-				// register DOM event handler and wire into Angular's lifecycle with scope.$apply
-				element.on('submit', function(event) {
-					scope.$apply(function() {
-						// on submit event, set submitted to true (like the previous trick)
-						form.$submitted = true;
-						// if form is valid, execute the submission handler function and reset form submission state
-						if (form.$valid) {
-							fn(scope, { $event : event });
-							form.$submitted = false;
-						}
-					});
-				});
-			}
-		};
-	}
-]);

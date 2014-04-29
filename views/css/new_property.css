@@ -1,0 +1,17 @@
+.form-group .alert {
+      padding: 0px;
+      margin-bottom: 0px;
+    }
+
+    .extra-info {
+        margin-top: 2em;
+        font-size: smaller;
+    }
+
+    #footer {
+      bottom: 0;
+      width: 100%;
+      /* Set the fixed height of the footer here */
+      height: 60px;
+      background-color: #f5f5f5;
+    }
