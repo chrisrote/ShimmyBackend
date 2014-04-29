@@ -21,7 +21,7 @@ module.exports = function(app, passport) {
 	app.get('/api/property', prop_api.getAllProperties);
 
 	// GET PROPERTY BY ID ====================================================
-	app.get('/api/propertyById', isLoggedIn, prop_api.getPropertyById);
+	app.get('/api/propertyById/:property_id', isLoggedIn, prop_api.propertyById);
 
 	// CREATE PROPERTY ========================================================
 	app.post('/api/property', isLoggedIn, prop_api.createProperties);
@@ -30,7 +30,7 @@ module.exports = function(app, passport) {
 	app.put('/api/rentalStatus/:rentStatus', isLoggedIn, prop_api.propertyRentalStatusChanged);
 
 	// UPDATE THE PROPERTY IMAGE ARRAY ========================================
-	app.put('/api/updatePropertyImages', isLoggedIn, prop_api.updatePropertyImages);
+	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImages);
 
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);

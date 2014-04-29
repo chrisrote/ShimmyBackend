@@ -53,11 +53,8 @@ var bootstrapWizardCreate = function(element, options) {
 	this.next = function(e) {
 		// If we clicked the last then dont activate this
 		if(element.hasClass('last')) {
-			console.log('element has last class');
 			return false;
 		}
-					console.log('element does not have last class');
-
 
 		if($settings.onNext && typeof $settings.onNext === 'function' && $settings.onNext($activeTab, $navigation, obj.nextIndex())===false){
 			return false;

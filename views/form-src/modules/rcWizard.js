@@ -58,9 +58,6 @@ var rcWizardDirective = {
         };
           
         this.forward = function () {
-          console.log('current index: ' + this.currentIndex);
-          console.log('first index: ' + this.firstIndex);
-          console.log('nav length: ' + this.navigationLength);
           if (steps.length)
           
           var currentStep = (steps.length > self.currentIndex) ? steps[self.currentIndex] : null;

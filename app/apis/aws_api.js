@@ -17,15 +17,13 @@ createS3Policy = function(contentType, callback) {
     var s3Policy = {
         'expiration': getExpiryTime(),
         'conditions': [
-            ['starts-with', '$key', '/'],
+            ['starts-with', '$key', 'shimmy-assets/'],
             {'bucket': config.bucket},
             {'acl': 'public-read'},
             ['starts-with', '$Content-Type', contentType],
             {'success_action_status' : '201'}
         ]
     };
-
-    console.log('MY POLICY: ' + JSON.stringify(s3Policy));
 
     // stringify and encode the policy
     var stringPolicy = JSON.stringify(s3Policy);

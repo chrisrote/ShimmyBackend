@@ -43,7 +43,7 @@ exports.createProperties = function(req, res) {
 				num_beds		: req.body.numBeds,
 				num_baths	   	: req.body.numBaths,
 				is_rented		: false,
-				imageURLs 		: ['https://s3.amazonaws.com/Shimmy/apartments/default_apt.png'],
+				imageURLs 		: ['https://s3.amazonaws.com/shimmy-assets-tyler/no_picture_available1.gif?AWSAccessKeyId=ASIAIDXBUKWHGEJFVEUA&Expires=1398787200&Signature=xIEvAtg91Q/q5gcFUVUqgWh4imw%3D&x-amz-security-token=AQoDYXdzEMD//////////wEakAIsd%2BzXaW7x3YyF9oBN/sHIywaAXbqEUQ7CSRLstjfPDbQF6wliWwZmVEby86nOD4bEG9sT2TKYEfmlUZI1VuqvCRQL2vdoqzxEzOZTTlNoj3Fn3sQowTyC%2BD%2B2zokGldtUhLDfoA12qWPFhtn9uQlo/Jvh5RoKNIos6hl5f7OMyfZUxxx/PGRdsPE0pVn8eNo2b12Tzi3apQtoLd7BmFeHtlOOMv6ylHtJsLGt012GOTg9BVJxYKNmrhp9FTXwMSDOeP3qvI/bSpfBBCPfI/5o7Vdd4A9HuAprWfN1VySVtIwMD/11hvgQhbv8qkbonhkMRfyni/SRbM1f2z%2BRVNgKn6%2BgbItcHs3Ox/nIcJbJZyDb9f6aBQ%3D%3D'],
 				latitude	    : latitude,
 				longitude	 	: longitude,
 				landlord_id		: req.body.user
@@ -80,18 +80,38 @@ exports.propertyRentalStatusChanged = function(req, res) {
 // ===================================================
 // Update Property
 exports.updatePropertyImages = function(req, res) {
-	Property.find({'_id': req.prop_id}, function(err, property) {
-		if(err) res.send(err);
-		property.imageURLs = req.body.myImages;
-		property.save(function(err) {
-			if(err) res.send(err);
-			res.send(property);
-		});
+	var query = { _id : req.params.property_id };
+	var myImages = [];
+	var imageArray = req.body['imageArr'];
+
+	imageArray.forEach(function(entry) {
+		console.log(entry);
+		myImages.push(entry['location']);
 	});
+		
+	console.log('got images: ' + myImages);
+	var updates = { imageURLs : myImages };
+	Property.update(query, updates, function(err, affected) {
+		console.log('affected rows: %d', affected);
+		res.send('success');
+	});
+	/*
+	Property.find({'_id': req.params.property_id }, function(err, properties) {
+		if(err) res.send(err);
+		var aProperty = new Property(properties[0]);
+		aProperty.imageURLs = req.body['imageArr'];
+		aProperty.update(function(err) {
+			if(err) {
+				console.log('we got an error: ' + JSON.stringify(err));
+				res.send(err);
+			}
+			res.send(aProperty);
+		});
+	});*/
 };
 
-exports.getPropertyById = function(req, res) {
-	Property.find({'_id': req.prop_id}, function(err, property) {
+exports.propertyById = function(req, res) {
+	Property.find({'_id': req.params.property_id }, function(err, property) {
 		if(err) res.send(err);
 		res.send(property);
 	});
@@ -100,7 +120,7 @@ exports.getPropertyById = function(req, res) {
 // ===================================================
 // Receive property junctions
 exports.postPropJunctions = function(req, res) {
-	var email = req.params.user-email;
+	var email = req.params.user_email;
 	var phone = req.params.phone;
 
 	// ============================================================

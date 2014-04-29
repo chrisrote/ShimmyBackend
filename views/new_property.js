@@ -1,3 +1,5 @@
+'use strict'
+
 var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
   .run(function ($rootScope, $location, $http) {
 
@@ -5,8 +7,6 @@ var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootst
         $rootScope.config = config;
       });
   });
-
-//var xml2json = require('./xml2json');
 
 function mainController($scope, $http, $location, $window, $q, $timeout, $upload, $rootScope) {
 	$scope.new_property = {};
@@ -19,16 +19,12 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
         $scope.upload[index] = null;
     };
 
-
-	// =========================================================
-	// CALL THE BACKEND TO GET THE AMAZON S3 POLICY
-
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
 		$scope.new_property['user'] = $scope.userId;
 		$http.post('/api/property', $scope.new_property)
 			.success(function(data){
-				$scope.propertyId = data._id;
+				$scope.propertyId = data['_id'];
 			})
 			.error(function(data){
 				console.log('Error: ' + data);
@@ -47,22 +43,14 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 
 
   	$scope.completeProperty = function() {
-      var imagesToUpload = {};
-      imagesToUpload['myImages'] = $scope.imageUploads;
-      console.log('myImages: ' + JSON.stringify(imagesToUpload));
-  		$http.get('/api/propertyById', $scope.propertyId)
-  			.success(function(data) {
-  				console.log('my image uploads: ' + JSON.stringify(imageUploads));
-  				$http.post('/api/updatePropertyImages', imagesToUpload)
-  					.success(function(data){
-  						$window.location.href = '/profile';
-  					})
-  					.error(function(data) {
-  						alert('There was an error. Please contact admin@shimmylandlord.com for assistance');
-  					})
+      var myImages = {};
+      myImages['imageArr'] = $scope.imageUploads;  		
+      $http.put('/api/updatePropertyImages/' + $scope.propertyId, myImages)
+  			.success(function(data){
+  				$window.location.href = '/profile';
   			})
   			.error(function(data) {
-  				console.log('Error: ' + data);
+  				alert('There was an error. Please contact admin@shimmylandlord.com for assistance');
   			})
   	};
 
@@ -79,7 +67,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
                             data: {
-                                'key' : 'shimmy-assets-tyler/'+ Math.round(Math.random()*10000) + '$$' + file.name,
+                                'key' : 'shimmy-assets/'+ Math.round(Math.random()*10000) + '$$' + file.name,
                                 'acl' : 'public-read',
                                 'Content-Type' : file.type,
                                 'AWSAccessKeyId': s3Params.AWSAccessKeyId,
@@ -100,7 +88,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                                     etag: data.postresponse.etag
                                 };
                                 $scope.imageUploads.push(parsedData);
-
                             } else {
                                 alert('Upload Failed');
                             }
