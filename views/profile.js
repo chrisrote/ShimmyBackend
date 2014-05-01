@@ -5,7 +5,6 @@ $('.editButton').click(function(){
 
 $('.deleteButton').click(function(){             
     var prop_id = $(this).data('productId');
-    console.log('prop_id: ' + prop_id);
 
     bootbox.dialog({
       message: "deleting property",
@@ -24,7 +23,6 @@ $('.deleteButton').click(function(){
 	      	$.ajax({
 	      		type: 'DELETE',
         		url: '/api/property/' + prop_id,
-        		//data: { 'property_id' : prop_id },
         		dataType: "json",
         		cache: false,
         		timeout: 5000,

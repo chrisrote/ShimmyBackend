@@ -38,7 +38,9 @@ exports.createProperties = function(req, res) {
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
-				address		 	: req.body.street,
+				street		 	: req.body.street,
+				city			: req.body.city,
+				zip				: req.body.zip,
 				description	 	: req.body.description,
 				num_beds		: req.body.numBeds,
 				num_baths	   	: req.body.numBaths,
@@ -71,10 +73,17 @@ exports.getPropertiesForUserEmail = function(req, res) {
 
 };
 
+exports.updateProperty = function(req, res) {
+
+};
+
 // ===================================================
 // Update a property to rented
 exports.propertyRentalStatusChanged = function(req, res) {
-	
+	var property_id = req.params.property_id;
+	var rentStatus = req.params.rentStatus;
+
+	console.log('updating property_id: ' + property_id + ' with rent status: ' + rentStatus);
 };
 
 // ===================================================
@@ -85,19 +94,17 @@ exports.updatePropertyImages = function(req, res) {
 	var imageArray = req.body['imageArr'];
 
 	imageArray.forEach(function(entry) {
-		console.log(entry);
 		myImages.push(entry['location']);
 	});
 		
-	console.log('got images: ' + myImages);
 	var updates = { imageURLs : myImages };
 	Property.update(query, updates, function(err, affected) {
-		console.log('affected rows: %d', affected);
 		res.send('success');
 	});
 };
 
 exports.propertyById = function(req, res) {
+	console.log('getting property by id: ' + req.params.property_id);
 	Property.find({'_id': req.params.property_id }, function(err, property) {
 		if(err) res.send(err);
 		res.send(property);

@@ -27,18 +27,16 @@ module.exports = function(app, passport) {
 	app.post('/api/property', isLoggedIn, prop_api.createProperties);
 
 	// SET PROPERTY TO RENTED OR VACANT =======================================
-	app.put('/api/rentalStatus/:rentStatus', isLoggedIn, prop_api.propertyRentalStatusChanged);
+	app.put('/api/rentalStatus/:property_id/:rentStatus', isLoggedIn, prop_api.propertyRentalStatusChanged);
 
 	// UPDATE THE PROPERTY IMAGE ARRAY ========================================
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImages);
 
+	// UPDATE PROPERTY ========================================================
+	app.put('/api/updateProperty/:property_id', isLoggedIn, prop_api.updateProperty);
+
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
-
-	// HOME PAGE (with login links) ===========================================
-	app.get('/', function(req, res) {
-		res.render('index.ejs'); // load the index.ejs file
-	});
 
 	app.get('/new_property', isLoggedIn, function(req, res) {
 		res.render('new_property.ejs', {
@@ -47,7 +45,9 @@ module.exports = function(app, passport) {
 	});
 
 	app.get('/edit_property/:property_id', isLoggedIn, function(req, res){
-		res.render('edit_property.ejs');
+		res.render('edit_property.ejs', {
+			property_id : req.params.property_id
+		});
 	});
 
 	// ========================================================================
@@ -60,6 +60,12 @@ module.exports = function(app, passport) {
 	// ========================================================================
 	// AUTHENTICATION METHODS
 	// ========================================================================
+
+	// HOME PAGE (with login links) ===========================================
+	app.get('/', function(req, res) {
+		if(req.isAuthenticated()) res.redirect('/profile');
+		else res.render('index.ejs');
+	});
 
 	// LOGIN ==================================================================
 	app.get('/login', function(req, res) {
@@ -102,14 +108,18 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	});
+
+	app.get('*', function(req, res){
+		if(req.isAuthenticated()) res.redirect('/profile');
+		else res.render('index.ejs');
+	});
 };
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
 	// if user is authenticated in the session, carry on
-	if (req.isAuthenticated())
-		return next();
+	if (req.isAuthenticated()) return next();
 
 	// if they aren't redirect them to the home page
 	res.redirect('/');

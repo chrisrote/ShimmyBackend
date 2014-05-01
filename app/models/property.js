@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Property', {
 	name 			: String,
-	address			: String,
+	city			: String,
+	street			: String,
+	zip				: String,
 	description		: String,
 	num_beds		: Number,
 	num_baths		: Number,

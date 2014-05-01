@@ -5,8 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
 	<title>Shimmy - Create Property</title>
 
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/new_property.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
@@ -61,93 +62,9 @@
 
           <!-- ***************** BEGIN FORMS ***************** -->
           <div class="tab-content">
-          
-            <form class="tab-pane active" id="first" name="firstForm" 
-                    rc-submit="saveState()" rc-step novalidate>
-                <h2>Enter Address Information</h2>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.name)}">
-                  <label class="control-label">Property Name</label>
-                  <input name="name" class="form-control" type="text"  placeholder="e.g. My Awesome Apartment" required ng-model="new_property.name" />
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.street)}">
-                  <label class="control-label">Street Address</label>
-                  <input name="street" class="form-control" type="text" placeholder="e.g. 123 Main St." required ng-model="new_property.street" />
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.suite)}">
-                  <label class="control-label">Apt, Suite, Bldg. (optional)</label>
-                  <input name="suite" class="form-control" type="text" placeholder="e.g. Apt #7" ng-model="new_property.suite" />
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.city)}">
-                  <label class="control-label">City</label>
-                  <input name="city" class="form-control" type="text" placeholder="e.g. Chicago" required ng-model="new_property.city" />
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.state)}">
-                  <label class="control-label">State</label>
-                  <input name="state" class="form-control" type="text" required placeholder="e.g. IL" ng-minlength="2" ng-maxlength="2" ng-model="new_property.state" />
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.zip)}">
-                  <label class="control-label">ZIP Code</label>
-                  <input name="zip" class="form-control" type="text" required placeholder="e.g. 60654" ng-minlength="5" ng-maxlength="5" ng-model="new_property.zip" />
-                  </div>
-              </form>
-
-
-
-            <!-- ***************** END ADDRESS FORM ***************** -->
-
-            <!-- ***************** BEGIN DETAILS FORM ******************* -->
-            <form class="tab-pane" id="second" name="secondForm" rc-submit="createProperty()" rc-step>
-                <h2>Enter Property Details</h2>
-                <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.numBeds)}">
-                  <label class="control-label">Bedrooms</label>
-                  <input class="form-control" type="text" data-name="numBeds" required ng-model="new_property.numBeds" /> 
-                  <!--<div class="bfh-selectbox" id="bedsSelect" data-name="numBeds" data-value="0">
-                    <div data-value="0">Studio</div>
-                    <div data-value="1">1</div>
-                    <div data-value="2">2</div>
-                    <div data-value="3">3</div>
-                    <div data-value="4">4</div>
-                    <div data-value="5">5+</div>
-                  </div>-->
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.numBaths)}">
-                  <label class="control-label">Bathrooms</label>
-                  <input class="form-control" type="text" data-name="numBaths" required ng-model="new_property.numBaths" /> 
-                  <!--<div class="bfh-selectbox" id="bathsSelect" data-name="numBaths" data-value="1" required ng-model="new_property.numBaths" >
-                    <div data-value="1">1</div>
-                    <div data-value="2">2</div>
-                    <div data-value="3">3</div>
-                    <div data-value="4">4</div>
-                    <div data-value="5">5+</div>
-                  </div>-->
-                </div>
-                <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.price)}">
-                  <label class="control-label">Price ($)</label>
-                  <input type="text" class="form-control bfh-number" data-min="100" name="price" required ng-model="new_property.price" >
-                </div> 
-                <div class="form-group clearfix" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.description)}">
-                  <label for="description">Description</label>
-                  <textarea class="form-control" id="description" name="description" ng-model="new_property.description" srows="3"></textarea>
-                </div>
-              </form>
-
-            <form class="tab-pane" id="last" name="lastForm" rc-submit="completeProperty()" rc-step>
-              <div class="row marketing">
-                <div class="form-group">
-                    <label for="photos">Input Pictures</label>
-                    <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
-                    <p class="help-block">Select pictures</p>
-                    <div ng-repeat="file in files" class="container">
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
-                                {{file.name}} : {{file.progress}}
-                            </div>
-                        </div>
-                        <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
-                    </div>
-                </div>
-              </div>
-            </form>
+            <% include partials/basicPropForm.ejs %>
+            <% include partials/detailsPropForm.ejs %>
+            <% include partials/imagePropForm.ejs %>
           </div>
           <!-- ***************** END FORMS ***************** -->
 
