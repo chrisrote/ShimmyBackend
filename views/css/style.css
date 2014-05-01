@@ -15,4 +15,11 @@ body {
 	background-color:#32313B;
 	font-family:"Helvetica Neue";
 	font-weight:lighter;
+	letter-spacing:1.5px
+}
+
+.form-fonts {
+	font-family:"Helvetica Neue";
+	font-weight:lighter;
+	letter-spacing:1.3px
 }
