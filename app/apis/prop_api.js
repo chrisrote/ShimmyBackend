@@ -74,7 +74,29 @@ exports.getPropertiesForUserEmail = function(req, res) {
 };
 
 exports.updateProperty = function(req, res) {
+	console.log('updating id: ' + req.body._id);
+	var myProp = new Property({
+  		name 			: req.body.name,
+		city			: req.body.city,
+		street			: req.body.street,
+		zip				: req.body.zip,
+		description		: req.body.description,
+		num_beds		: req.body.num_beds,
+		num_baths		: req.body.num_baths,
+		price			: req.body.price,
+		imageURLs		: req.body.imageURLs,
+		is_rented		: req.body.is_rented,
+		availableDate	: req.body.availableDate
+	});
 
+	var upsertData = myProp.toObject();
+	delete upsertData._id;
+	console.log('upsertData: ' + JSON.stringify(upsertData));
+
+	Property.findOneAndUpdate({ _id : req.body._id }, {$set : upsertData}, function(err, property) {
+		if(err) res.send('Got an Error: ' + err);
+		res.send(property);
+	});
 };
 
 // ===================================================
@@ -83,7 +105,7 @@ exports.propertyRentalStatusChanged = function(req, res) {
 	var property_id = req.params.property_id;
 	var rentStatus = req.params.rentStatus;
 
-	console.log('updating property_id: ' + property_id + ' with rent status: ' + rentStatus);
+	console.log('updating property_id: ' + property_id + ' with rent status: ' + rentStatus)
 };
 
 // ===================================================

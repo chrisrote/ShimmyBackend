@@ -33,7 +33,7 @@ module.exports = function(app, passport) {
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImages);
 
 	// UPDATE PROPERTY ========================================================
-	app.put('/api/updateProperty/:property_id', isLoggedIn, prop_api.updateProperty);
+	app.put('/api/updateProperty', isLoggedIn, prop_api.updateProperty);
 
 	// DELETE PROPERTY ========================================================
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);

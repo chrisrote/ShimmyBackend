@@ -30,7 +30,7 @@
 				    <input class="form-control" id="name" type="text" ng-model="property.name"/>
 				</div>
 				<div class="col-md-6 form-group">
-				    <label class="form-fonts" for="price">Price</label>
+				    <label class="form-fonts" for="price">Price ($)</label>
 				    <input class="form-control" id="price" type="text" ng-model="property.price"/>
 				</div>
 				<div class="col-md-12 form-group">
@@ -39,6 +39,7 @@
 				</div>
 				<span class="clearfix">
 
+			<button class="btn btn-danger btn-sm" ng-click="cancel()">Cancel</button>
 			<button class="btn btn-success btn-sm" ng-click="saveEdits()">Save Changes</button>
 		</div>
 	</div>
