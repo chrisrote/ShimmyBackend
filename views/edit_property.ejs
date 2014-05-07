@@ -2,14 +2,15 @@
 <html>
 <head>
 	<title>Shimmy - Home</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
   	<link rel="stylesheet" type="text/css" href="/css/style.css">
   	<script src="/file-upload/angular-file-upload-shim.min.js"></script> 
   	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
   	<script src="/file-upload/angular-file-upload.min.js"></script> 
+  	<script type="text/javascript" src="/edit_property.js"></script>
+  	<script src="/xml2json.js"></script>
   	<script>var myProp = "<%= property_id %>";</script>
 
 	<style>
@@ -17,36 +18,102 @@
 	</style>
 </head>
 <body ng-app="editProp">
-
 <%- include partials/navbar.ejs %>
 
 <div class="container">
-	<div ng-controller="editPropController" >
-		<div class="row">
-			<h3 class="form-fonts" ><span class="glyphicon glyphicon-pencil"></span>  Edit Property - {{ property.name }} </h3>
+	<div ng-controller="editPropController">
+		<h3 class="form-fonts" ><span class="glyphicon glyphicon-pencil"></span>  Edit Property - {{ my_property.name }} </h3>
+		<button class="btn btn-warning btn-sm" ng-click="changeShowDetails()" ng-show="!showDetails">Edit Details</button>
+		<button class="btn btn-warning btn-sm" ng-click="changeShowImages()" ng-show="showDetails">Edit Images</button>
+			
+			<div class="input-text-form" style="padding-top:10px;" ng-show="showDetails">
+				<div class="row">
+					<div class="col-md-3 form-group">
+					    <label class="form-fonts" for="is_rented">Is Rented?</label>
+					    <select class="form-control" ng-model="isRentVals.cur" required ng-options="v for v in isRentVals.values"></select>
+					</div>
+				</div>
 
-				<div class="col-md-6 form-group">
-				    <label class="form-fonts" for="name">Name</label>
-				    <input class="form-control" id="name" type="text" ng-model="property.name"/>
+				<div class="row">
+					<div class="col-md-6 form-group">
+						<label class="form-fonts" for="name">Name</label>
+				    	<input required class="form-control" id="name" type="text" ng-model="my_property.name"/>
+					</div>
+					<div class="col-md-6 form-group">
+				    	<label class="form-fonts" for="price">Price ($)</label>
+				    	<input class="form-control" id="price" type="text" required ng-model="my_property.price"/>
+					</div>
 				</div>
-				<div class="col-md-6 form-group">
-				    <label class="form-fonts" for="price">Price ($)</label>
-				    <input class="form-control" id="price" type="text" ng-model="property.price"/>
-				</div>
-				<div class="col-md-12 form-group">
-				    <label class="form-fonts" for="description">Description</label>
-                  	<textarea class="form-control" id="description" name="description" ng-model="property.description" srows="3"></textarea>
-				</div>
-				<span class="clearfix">
 
+				<div class="row">
+					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="city">City</label>
+					    <input class="form-control" id="city" type="text" required ng-model="my_property.city" placeholder="e.g. Chicago" required/>
+					</div>
+					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="state">State</label>
+					    <input class="form-control" id="state" type="text" ng-model="my_property.state" required placeholder="e.g. IL" ng-minlength="2" ng-maxlength="2"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 form-group">
+		               	<label class="form-fonts control-label">Apt, Suite, Bldg. (optional)</label>
+		               	<input name="suite" class="form-control" type="text" placeholder="e.g. Apt #7" ng-model="my_property.suite" />
+		            </div>
+					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="zip">Zip</label>
+					    <input class="form-control" id="zip" type="text" ng-model="my_property.zip" required/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="bedrooms">Bedrooms</label>
+					    <input class="form-control" id="bedrooms" type="text" ng-model="my_property.num_beds" required/>
+					</div>
+					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="bedrooms">Bathrooms</label>
+					    <input class="form-control" id="bedrooms" type="text" ng-model="my_property.num_beds" required />
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-12 form-group">
+					    <label class="form-fonts" for="description">Description</label>
+			           	<textarea class="form-control" id="description" name="description" ng-model="my_property.description" srows="3"></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="image-gallery" ng-show="!showDetails">
+				<div class="form-group">
+		            <label class="form-fonts" for="photos">Add Pictures</label>
+		            <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
+		            <p class="help-block">Select pictures</p>
+		            <div class="image-buttons">
+			           	<button class="btn btn-danger btm-sm" ng-show="selected_images.length > 0" ng-click="delete_selected_images()">Delete Selected Images</button>
+			        </div>
+		            <div ng-repeat="file in files" class="container">
+		                <div class="progress">
+		                    <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
+		                        {{file.name}} : {{file.progress}}
+		                    </div>
+		                </div>
+		                <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
+		            </div>
+		        </div>
+		                
+		        <div id="gal-images" class="col-md-12 col-sm-4 col-xs-6" style="padding-bottom:.5cm;">
+		           	<div class="col-md-3 col-sm-4 col-xs-6" ng-repeat="imageURL in my_property.imageURLs">
+					  	<img src={{imageURL}} ng-click="image.selected = !image.selected; select_image(imageURL);"  style="max-height: 120px;" ng-class="{ 'selected-image': image.selected }"  alt="" title="">
+					</div>
+		        </div> 
+
+		        <br/>
+			</div>
 			<button class="btn btn-danger btn-sm" ng-click="cancel()">Cancel</button>
 			<button class="btn btn-success btn-sm" ng-click="saveEdits()">Save Changes</button>
-		</div>
 	</div>
 </div>
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script type="text/javascript" src="/edit_property.js"></script>
 
 </body>
 </html>

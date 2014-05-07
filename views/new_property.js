@@ -87,7 +87,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                                     key: data.postresponse.key,
                                     etag: data.postresponse.etag
                                 };
-                                $scope.imageUploads.push(parsedData);
+                                $scope.imageUploads.push(parsedData);                                
                             } else {
                                 alert('Upload Failed');
                             }

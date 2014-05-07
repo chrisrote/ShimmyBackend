@@ -41,11 +41,11 @@ exports.createProperties = function(req, res) {
 				street		 	: req.body.street,
 				city			: req.body.city,
 				zip				: req.body.zip,
+				state 			: req.body.state,
 				description	 	: req.body.description,
 				num_beds		: req.body.numBeds,
 				num_baths	   	: req.body.numBaths,
 				is_rented		: false,
-				imageURLs 		: ['https://s3.amazonaws.com/shimmy-assets-tyler/no_picture_available1.gif?AWSAccessKeyId=ASIAIDXBUKWHGEJFVEUA&Expires=1398787200&Signature=xIEvAtg91Q/q5gcFUVUqgWh4imw%3D&x-amz-security-token=AQoDYXdzEMD//////////wEakAIsd%2BzXaW7x3YyF9oBN/sHIywaAXbqEUQ7CSRLstjfPDbQF6wliWwZmVEby86nOD4bEG9sT2TKYEfmlUZI1VuqvCRQL2vdoqzxEzOZTTlNoj3Fn3sQowTyC%2BD%2B2zokGldtUhLDfoA12qWPFhtn9uQlo/Jvh5RoKNIos6hl5f7OMyfZUxxx/PGRdsPE0pVn8eNo2b12Tzi3apQtoLd7BmFeHtlOOMv6ylHtJsLGt012GOTg9BVJxYKNmrhp9FTXwMSDOeP3qvI/bSpfBBCPfI/5o7Vdd4A9HuAprWfN1VySVtIwMD/11hvgQhbv8qkbonhkMRfyni/SRbM1f2z%2BRVNgKn6%2BgbItcHs3Ox/nIcJbJZyDb9f6aBQ%3D%3D'],
 				latitude	    : latitude,
 				longitude	 	: longitude,
 				landlord_id		: req.body.user
@@ -104,8 +104,15 @@ exports.updateProperty = function(req, res) {
 exports.propertyRentalStatusChanged = function(req, res) {
 	var property_id = req.params.property_id;
 	var rentStatus = req.params.rentStatus;
+};
 
-	console.log('updating property_id: ' + property_id + ' with rent status: ' + rentStatus)
+exports.changePropertyImageArr = function(req, res) {
+	var query = { _id : req.params.property_id };
+	var imageArray = req.body['imageArr'];
+	var updates = { imageURLs : imageArray };
+	Property.update(query, updates, function(err, affected) {
+		res.send('success');
+	});
 };
 
 // ===================================================
@@ -115,13 +122,20 @@ exports.updatePropertyImages = function(req, res) {
 	var myImages = [];
 	var imageArray = req.body['imageArr'];
 
-	imageArray.forEach(function(entry) {
-		myImages.push(entry['location']);
-	});
+	Property.find({'_id': req.params.property_id }, function(err, property) {
+		if(err) res.send(err);
+		imageArray.forEach(function(entry) {
+			myImages.push(entry['location']);
+		});
+
+		property[0].imageURLs.forEach(function(entry) {
+			myImages.push(entry);
+		});
 		
-	var updates = { imageURLs : myImages };
-	Property.update(query, updates, function(err, affected) {
-		res.send('success');
+		var updates = { imageURLs : myImages };
+		Property.update(query, updates, function(err, affected) {
+			res.send('success');
+		});
 	});
 };
 
