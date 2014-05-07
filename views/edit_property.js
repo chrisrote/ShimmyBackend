@@ -1,4 +1,6 @@
 
+var s3_asset_folder = process.env.ASSET_FOLDER || 'shimmy-assets/';
+
 var editProp = angular.module('editProp', ['angularFileUpload'])
     .run(function ($rootScope, $location, $http) {
 
@@ -21,18 +23,52 @@ function editPropController($scope, $http, $window, $upload, $rootScope, $route)
 	$scope.my_property;
 	$scope.showDetails = true;
     $scope.selected_images = [];
+    $scope.isRentVals = {};
+    $scope.tf_options = [
+        { name: 'False', value: 'false' }, 
+        { name: 'True', value: 'true' }
+    ];
+
+    $scope.bed_options = [
+        { name: '0', value: '0' }, 
+        { name: '1', value: '1' }, 
+        { name: '2', value: '2' },
+        { name: '3', value: '3' }, 
+        { name: '4', value: '4' },
+        { name: '5', value: '5' }
+    ];
+
+    $scope.bath_options = [
+        { name: '1', value: '1' }, 
+        { name: '2', value: '2' },
+        { name: '3', value: '3' }, 
+        { name: '4', value: '4' },
+        { name: '5', value: '5' }
+    ];
+
+    $scope.tf_form = {type : $scope.tf_options[0].value};
+    $scope.bed_form = {type : $scope.bed_options[0].value};
+    $scope.bath_form = {type : $scope.bath_options[0].value};
 
 	$http.get('/api/propertyById/' + $scope.prop_id)
 		.success(function(properties) {
 			$scope.my_property = properties[0];
-            $scope.isRentVals = { "cur" : $scope.my_property.is_rented, "values" : ["true", "false"]};
+            console.log('properties: ' + JSON.stringify($scope.my_property));
+            if($scope.my_property.is_rented) {
+                $scope.tf_form = {type : $scope.tf_options[1].value};
+            }
+            $scope.bath_form = {type : $scope.bath_options[$scope.my_property.num_baths - 1].value};
+            $scope.bed_form = {type : $scope.bed_options[$scope.my_property.num_beds].value};
 		})
 		.error(function(err) {
 			alert('We got an error: ' + err);
 		});
 
 	$scope.saveEdits = function() {
-        $scope.my_property.is_rented = $scope.isRentVals.cur;
+        $scope.my_property.is_rented = $scope.tf_form.type;
+        $scope.my_property.num_beds = $scope.bed_form.type;
+        $scope.my_property.num_baths = $scope.bath_form.type;
+
 		$http.put('/api/updateProperty', $scope.my_property)
 			.success(function(property) {
                 $window.location.href = '/profile';
@@ -98,7 +134,7 @@ function editPropController($scope, $http, $window, $upload, $rootScope, $route)
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
                             data: {
-                                'key' : 'shimmy-assets/'+ Math.round(Math.random()*10000) + '$$' + file.name,
+                                'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + file.name,
                                 'acl' : 'public-read',
                                 'Content-Type' : file.type,
                                 'AWSAccessKeyId': s3Params.AWSAccessKeyId,

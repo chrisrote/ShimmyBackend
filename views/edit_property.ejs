@@ -7,7 +7,7 @@
   	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
   	<link rel="stylesheet" type="text/css" href="/css/style.css">
   	<script src="/file-upload/angular-file-upload-shim.min.js"></script> 
-  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
   	<script src="/file-upload/angular-file-upload.min.js"></script> 
   	<script type="text/javascript" src="/edit_property.js"></script>
   	<script src="/xml2json.js"></script>
@@ -30,7 +30,8 @@
 				<div class="row">
 					<div class="col-md-3 form-group">
 					    <label class="form-fonts" for="is_rented">Is Rented?</label>
-					    <select class="form-control" ng-model="isRentVals.cur" required ng-options="v for v in isRentVals.values"></select>
+					    <select class="form-control" ng-model="tf_form.type" required ng-options="option.value as option.name for option in tf_options">
+					    </select>
 					</div>
 				</div>
 
@@ -62,17 +63,19 @@
 		            </div>
 					<div class="col-md-6 form-group">
 					    <label class="form-fonts" for="zip">Zip</label>
-					    <input class="form-control" id="zip" type="text" ng-model="my_property.zip" required/>
+					    <input class="form-control" id="zip" type="text" ng-model="my_property.zip" ng-minlength="5" ng-maxlength="5" required/>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 form-group">
 					    <label class="form-fonts" for="bedrooms">Bedrooms</label>
-					    <input class="form-control" id="bedrooms" type="text" ng-model="my_property.num_beds" required/>
+					    <select class="form-control" ng-model="bed_form.type" required ng-options="option.value as option.name for option in bed_options">
+					    </select>
 					</div>
 					<div class="col-md-6 form-group">
 					    <label class="form-fonts" for="bedrooms">Bathrooms</label>
-					    <input class="form-control" id="bedrooms" type="text" ng-model="my_property.num_beds" required />
+					    <select class="form-control" ng-model="bath_form.type" required ng-options="option.value as option.name for option in bath_options">
+					    </select>
 					</div>
 				</div>
 

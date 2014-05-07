@@ -1,5 +1,7 @@
 'use strict'
 
+var s3_asset_folder = process.env.ASSET_FOLDER || 'shimmy-assets/';
+
 var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
   .run(function ($rootScope, $location, $http) {
 
@@ -67,7 +69,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
                             data: {
-                                'key' : 'shimmy-assets/'+ Math.round(Math.random()*10000) + '$$' + file.name,
+                                'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + file.name,
                                 'acl' : 'public-read',
                                 'Content-Type' : file.type,
                                 'AWSAccessKeyId': s3Params.AWSAccessKeyId,
