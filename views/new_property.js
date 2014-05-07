@@ -1,7 +1,5 @@
 'use strict'
 
-var s3_asset_folder = process.env.ASSET_FOLDER || 'shimmy-assets/';
-
 var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
   .run(function ($rootScope, $location, $http) {
 
@@ -15,7 +13,13 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.userId = window.myUser;
 	$scope.propertyId;
 	$scope.imageUploads = [];
-    
+  var s3_asset_folder = 'shimmy-production/'; 
+
+  if($location['$$host'] == 'localhost') {
+    console.log('in local host');
+    s3_asset_folder = 'shimmy-assets/'; 
+  }
+
     $scope.abort = function(index) {
         $scope.upload[index].abort();
         $scope.upload[index] = null;

@@ -1,6 +1,4 @@
 
-var s3_asset_folder = process.env.ASSET_FOLDER || 'shimmy-assets/';
-
 var editProp = angular.module('editProp', ['angularFileUpload'])
     .run(function ($rootScope, $location, $http) {
 
@@ -24,6 +22,12 @@ function editPropController($scope, $http, $window, $upload, $rootScope, $route)
 	$scope.showDetails = true;
     $scope.selected_images = [];
     $scope.isRentVals = {};
+    var s3_asset_folder = 'shimmy-production/';
+
+    if($location['$$host'] == 'localhost') {
+        s3_asset_folder = 'shimmy-assets/'; 
+    }
+
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 
         { name: 'True', value: 'true' }
