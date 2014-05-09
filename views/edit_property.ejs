@@ -92,9 +92,7 @@
 		            <label class="form-fonts" for="photos">Add Pictures</label>
 		            <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
 		            <p class="help-block">Select pictures</p>
-		            <div class="image-buttons">
-			           	<button class="btn btn-danger btm-sm" ng-show="selected_images.length > 0" ng-click="delete_selected_images()">Delete Selected Images</button>
-			        </div>
+		            
 		            <div ng-repeat="file in files" class="container">
 		                <div class="progress">
 		                    <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
@@ -110,6 +108,9 @@
 					  	<img src={{imageURL}} ng-click="image.selected = !image.selected; select_image(imageURL);"  style="max-height: 120px;" ng-class="{ 'selected-image': image.selected }"  alt="" title="">
 					</div>
 		        </div> 
+		        <div class="image-buttons">
+			           	<button class="btn btn-danger btm-sm" ng-show="selected_images.length > 0" ng-click="delete_selected_images()">Delete Selected Images</button>
+			        </div>
 
 		        <br/>
 			</div>

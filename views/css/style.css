@@ -21,11 +21,23 @@ body {
 .form-fonts {
 	font-family:"Helvetica Neue";
 	font-weight:lighter;
-	letter-spacing:1.3px
+	letter-spacing:1.3px;
 }
 
 
 .selected-image {
 	border:3px solid #1FD26A;
 	border-style:solid;
+}
+
+label {
+	font-family:"Helvetica Neue";
+	font-weight:lighter;
+	letter-spacing:1.3px;
+}
+
+button {
+	font-family:"Helvetica Neue";
+	font-weight:lighter;
+	letter-spacing:1.3px;
 }

@@ -1,5 +1,6 @@
 // load the property model
 var Property = require('./models/property');
+var Landlord = require('./models/landlord');
 var https = require('https');
 var crypto = require('crypto');
 var path = require('path');
@@ -9,6 +10,12 @@ var prop_api = require('./apis/prop_api'),
 
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
+
+	// ========================================================================
+	// LANDLORD METHODS
+	// ========================================================================
+
+	app.get('/api/landlord/:landlord_id', prop_api.getLandlord);
 
 	// ========================================================================
 	// PROPERTY METHODS
@@ -73,6 +80,12 @@ module.exports = function(app, passport) {
 	// LOGIN ==================================================================
 	app.get('/login', function(req, res) {
 		res.render('login.ejs', { message: req.flash('loginMessage') });
+	});
+
+	app.get('/settings', isLoggedIn, function(req, res){
+		res.render('settings.ejs', {
+			aLandlord 	: req.user._id
+		});
 	});
 
 	// process the login form

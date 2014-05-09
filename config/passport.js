@@ -38,6 +38,7 @@ module.exports = function(passport) {
         passReqToCallback : true // allows us to pass back the entire request to the callback
     },
     function(req, email, password, done) {
+        console.log('req.city: ' + JSON.stringify(req.body));
 
         // asynchronous
         // Landlord.findOne wont fire unless data is sent back
@@ -50,6 +51,10 @@ module.exports = function(passport) {
             if (err)
                 return done(err);
 
+            if(req.body.repassword != req.body.password) {
+                return done(null, false, req.flash('signupMessage', 'Password Mismatch.'));
+            }
+
             // check to see if theres already a user with that email
             if (user) {
                 return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
@@ -60,8 +65,12 @@ module.exports = function(passport) {
                 var newUser            = new Landlord();
 
                 // set the user's local credentials
-                newUser.local.email    = email.toLowerCase();
-                newUser.local.password = newUser.generateHash(password);
+                newUser.local.email     = email.toLowerCase();
+                newUser.local.password  = newUser.generateHash(password);
+                newUser.local.fname     = req.body.fname;
+                newUser.local.lname     = req.body.lname;
+                newUser.local.phone     = req.body.phone;
+                newUser.local.city      = req.body.city;
 
 				// save the user
                 newUser.save(function(err) {

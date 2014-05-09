@@ -1,0 +1,44 @@
+<!doctype html>
+<html ng-app="landlord_settings">
+<head>
+	<title>Shimmy - Home</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="/css/style.css">
+  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+  	<script>var my_landlord = "<%=aLandlord%>";</script>
+
+  	<script type="text/javascript" src="/settings.js"></script>
+
+	<style>
+		body 		{ padding-top:80px; word-wrap:break-word; }
+	</style>
+</head>
+<body>
+
+<% include partials/navbar.ejs %>
+
+<div ng-controller="editLandlordController">
+	<div class="container">
+		<h1 class="form-fonts">My Account - {{landlord.fname}} {{landlord.lname}}</h1>
+		<div class="row">
+			<div class="col-md-6 form-group">
+				<label class="form-fonts" for="name">Email</label>
+			   	<input required class="form-control" id="name" type="text" ng-model="my_property.name"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 form-group">
+				<label class="form-fonts" for="name">Password</label>
+			   	<input required class="form-control" id="name" type="text" ng-model="my_property.name"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+
+
+</body>
+</html>

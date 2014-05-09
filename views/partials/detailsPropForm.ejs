@@ -1,27 +1,12 @@
 <form class="tab-pane" id="second" name="secondForm" rc-submit="createProperty()" rc-step>
                 <h2>Enter Property Details</h2>
-                <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.numBeds)}">
+                <div class="form-group">
                   <label class="control-label">Bedrooms</label>
-                  <input class="form-control" type="text" data-name="numBeds" required ng-model="new_property.numBeds" /> 
-                  <!--<div class="bfh-selectbox" id="bedsSelect" data-name="numBeds" data-value="0">
-                    <div data-value="0">Studio</div>
-                    <div data-value="1">1</div>
-                    <div data-value="2">2</div>
-                    <div data-value="3">3</div>
-                    <div data-value="4">4</div>
-                    <div data-value="5">5+</div>
-                  </div>-->
+                  <select class="form-control" ng-model="bed_form.type" ng-options="option.value as option.name for option in bed_options"></select>
                 </div>
-                <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.numBaths)}">
+                <div class="form-group">
                   <label class="control-label">Bathrooms</label>
-                  <input class="form-control" type="text" data-name="numBaths" required ng-model="new_property.numBaths" /> 
-                  <!--<div class="bfh-selectbox" id="bathsSelect" data-name="numBaths" data-value="1" required ng-model="new_property.numBaths" >
-                    <div data-value="1">1</div>
-                    <div data-value="2">2</div>
-                    <div data-value="3">3</div>
-                    <div data-value="4">4</div>
-                    <div data-value="5">5+</div>
-                  </div>-->
+                  <select class="form-control" ng-model="bath_form.type" ng-options="option.value as option.name for option in bath_options"></select>                  
                 </div>
                 <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.price)}">
                   <label class="control-label">Price ($)</label>

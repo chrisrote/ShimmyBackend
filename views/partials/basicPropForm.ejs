@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.state)}">
                   <label class="form-fonts control-label">State</label>
-                  <input name="state" class="form-control" type="text" required placeholder="e.g. IL" ng-minlength="2" ng-maxlength="2" ng-model="new_property.state" />
+                  <input name="state" class="form-control" type="text" ng-minlength="2" ng-maxlength="2" ng-model="new_property.state" required placeholder="e.g. IL"/>
                 </div>
                 <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.zip)}">
                   <label class="form-fonts control-label">ZIP Code</label>

@@ -1,5 +1,6 @@
 var Property 			= require('../models/property');
 var PropertyJunction 	= require('../models/property_junction');
+var Landlord 			= require('../models/landlord');
 var https 				= require('https');
 
 // ===================================================
@@ -34,7 +35,7 @@ exports.createProperties = function(req, res) {
 			var parsedJSON = JSON.parse(my_result);
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
-
+			console.log('creating property with state: ' + req.body.state);
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
@@ -183,5 +184,17 @@ exports.deleteProperty = function(req, res) {
 				res.json(properties);
 			});
 		});
+	});
+};
+
+
+
+
+exports.getLandlord = function(req, res) {
+	var landlord_id = req.params.landlord_id;
+
+	Landlord.find({ '_id' : req.user._id}, function(err, landlords) {
+		if(err) res.send(err);
+		res.send(landlords[0]);
 	});
 };

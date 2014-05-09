@@ -15,6 +15,26 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.imageUploads = [];
   var s3_asset_folder = 'shimmy-production/'; 
 
+  $scope.bed_options = [
+        { name: '0', value: '0' }, 
+        { name: '1', value: '1' }, 
+        { name: '2', value: '2' },
+        { name: '3', value: '3' }, 
+        { name: '4', value: '4' },
+        { name: '5', value: '5' }
+    ];
+
+  $scope.bath_options = [
+        { name: '1', value: '1' }, 
+        { name: '2', value: '2' },
+        { name: '3', value: '3' }, 
+        { name: '4', value: '4' },
+        { name: '5', value: '5' }
+    ];
+
+  $scope.bed_form = {type : $scope.bed_options[0].value};
+  $scope.bath_form = {type : $scope.bath_options[0].value};
+
   if($location['$$host'] == 'localhost') {
     console.log('in local host');
     s3_asset_folder = 'shimmy-assets/'; 
@@ -27,7 +47,10 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
+    $scope.new_property.numBaths = $scope.bath_form.type;
+    $scope.new_property.numBeds = $scope.bed_form.type;
 		$scope.new_property['user'] = $scope.userId;
+    console.log('about to create property: ' + JSON.stringify($scope.new_property));
 		$http.post('/api/property', $scope.new_property)
 			.success(function(data){
 				$scope.propertyId = data['_id'];

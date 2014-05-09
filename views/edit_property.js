@@ -7,16 +7,7 @@ var editProp = angular.module('editProp', ['angularFileUpload'])
         });
     });
 
-/*
-editProp.directive('imageHolder', function() {
-    console.log('loading directive');
-    return function() {
-        console.log('returning dir');
-    }
-});
-*/
-
-function editPropController($scope, $http, $window, $upload, $rootScope, $route) {
+function editPropController($scope, $location, $http, $window, $upload, $rootScope, $route) {
 	$scope.prop_id = myProp;
 	$scope.my_property;
 	$scope.showDetails = true;

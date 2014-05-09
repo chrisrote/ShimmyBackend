@@ -28,10 +28,6 @@ $('.deleteButton').click(function(){
         		timeout: 5000,
         		success: function(data) {
                     console.log('my data: ' + JSON.stringify(data));
-                    //var html = new EJS({url: 'landlord_props.ejs'}).render(data);
-
-                    // add HTML to the DOM using a <div id="container"></div> wrapper.
-                    //document.getElementById("table").innerHTML = html;
             		displayCallback.show("Property Successfully Deleted.");
                     location.reload();
         		}, 
