@@ -4,7 +4,6 @@ var editProp = angular.module('editProp', ['angularFileUpload'])
 
         $http.get('/api/config').success(function(config) {
             $rootScope.config = config;
-            console.log('config: ' + JSON.stringify(config));
         });
     });
 
@@ -14,11 +13,14 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
 	$scope.showDetails = true;
     $scope.selected_images = [];
     $scope.isRentVals = {};
-    var s3_asset_folder = 'shimmy-production/';
+    var s3_asset_folder = 'shimmy-assets/';
 
-    if($location['$$host'] == 'localhost') {
+    /*if($location['$$host'] == 'localhost') {
         s3_asset_folder = 'shimmy-assets/'; 
-    }
+    }*/
+
+    console.log('asset folder: ' + s3_asset_folder);
+
 
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 
@@ -49,7 +51,6 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
 	$http.get('/api/propertyById/' + $scope.prop_id)
 		.success(function(properties) {
 			$scope.my_property = properties[0];
-            console.log('properties: ' + JSON.stringify($scope.my_property));
             if($scope.my_property.is_rented) {
                 $scope.tf_form = {type : $scope.tf_options[1].value};
             }
@@ -126,7 +127,6 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
-                        console.log('params: ' + JSON.stringify(s3Params));
                         $scope.upload[i] = $upload.upload({
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
