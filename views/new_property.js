@@ -14,8 +14,11 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.userId = window.myUser;
 	$scope.propertyId;
 	$scope.imageUploads = [];
-  var s3_asset_folder = 'shimmy-production/'; 
+  var s3_asset_folder = 'shimmy-assets/'; 
 
+  /*if($location['$$host'] == 'localhost') {
+    s3_asset_folder = 'shimmy-assets/'; 
+  }*/
 
   $scope.bed_options = [
         { name: '0', value: '0' }, 
@@ -37,9 +40,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
   $scope.bed_form = {type : $scope.bed_options[0].value};
   $scope.bath_form = {type : $scope.bath_options[0].value};
 
-  if($location['$$host'] == 'localhost') {
-    s3_asset_folder = 'shimmy-assets/'; 
-  }
 
     $scope.abort = function(index) {
         $scope.upload[index].abort();
