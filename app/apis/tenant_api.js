@@ -32,8 +32,6 @@ exports.getPropsForTenant = function(req, res) {
 				propJunctions.push(newJunc);
 	    	});
 
-	    	console.log('prop junctions: ' + JSON.stringify(propJunctions));
-
 	    	PropertyJunction.create(propJunctions, function(err) {
 	    		if(err) res.send(err);
 	    		var insertedJunctions = [];
@@ -55,23 +53,14 @@ exports.getPropsForTenant = function(req, res) {
 // Called when hitting route
 // /api/createPropJunctions
 exports.createPropJunctions = function(req, res) {
-	
-	/*var newPropJunctions = req.body.property_junctions;
+	var newPropJunctions = req.body.property_junctions;
 	console.log('got new property_junctions: ' + JSON.stringify(newPropJunctions));
-
 	newPropJunctions.forEach(function(entry) {
-		PropertyJunction.create({
-			email 		: entry.email,
-			phone		: entry.phone,
-			message		: entry.message,
-			PropertyId	: entry.property_id,
-			tenant      : entry.tenant_id,
-			swipeStatus : entry.swipe_status
-		}, function(err, propJunctions) {
-			if(err) res.send(err);
-			res.send('successfully created prop junctions');
+		PropertyJunction.update({ _id : entry._id }, { swipeStatus : entry.swipeStatus}, function(err, affected) {
+			console.log('updated');
 		});
-	});*/
+	});
+	res.send('updated ' + newPropJunctions.length + ' junctions');
 };
 
 // Called when hitting route
