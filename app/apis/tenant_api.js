@@ -13,11 +13,8 @@ exports.getPropsForTenant = function(req, res) {
 	    
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
-	    	console.log('got a junc: ' + JSON.stringify(junc));
 	        prop_ids.push(junc.PropertyId); 
 	    });
-
-	    console.log('prop ids: ' + JSON.stringify(prop_ids));
          
 	    Property.find(req.body.searchOpts).nin('_id', prop_ids).exec(function(err, properties) {
 	    	if(err) res.send(err);
@@ -37,9 +34,10 @@ exports.getPropsForTenant = function(req, res) {
 
 	    	PropertyJunction.create(propJunctions, function(err, junctions) {
 	    		if(err) res.send(err);
+	    		console.log('created junctions: ' + JSON.stringify(junctions));
 	    		var finalRes = {
 					"properties" : properties,
-					"junctions"	 : propJunctions
+					"junctions"	 : junctions
 				};
 				res.send(finalRes);
 	    	});
