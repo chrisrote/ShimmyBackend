@@ -6,7 +6,7 @@ var tenantSchema = mongoose.Schema({
     phone		 	: String,
     searchOpts	 	: {},
     contactMessage	: String,
-    roomates		: [mongoose.Schema.Types.ObjectId]
+    roomates		: [String]
 });
 
 
