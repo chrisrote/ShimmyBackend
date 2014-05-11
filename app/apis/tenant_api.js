@@ -32,6 +32,12 @@ exports.getPropsForTenant = function(req, res) {
 	})
 };
 
+exports.getTestProps = function(req, res) {
+	Property.find(function(err, props){
+		res.send(props);
+	})
+};
+
 // Called when hitting route
 // /api/createPropJunctions
 exports.createPropJunctions = function(req, res) {

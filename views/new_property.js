@@ -5,7 +5,6 @@ var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootst
 
     $http.get('/api/config').success(function(config) {
         $rootScope.config = config;
-        console.log('config: ' + JSON.stringify(config));
       });
   });
 
@@ -51,7 +50,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
     $scope.new_property.numBaths = $scope.bath_form.type;
     $scope.new_property.numBeds = $scope.bed_form.type;
 		$scope.new_property['user'] = $scope.userId;
-    console.log('about to create property: ' + JSON.stringify($scope.new_property));
 		$http.post('/api/property', $scope.new_property)
 			.success(function(data){
 				$scope.propertyId = data['_id'];
@@ -93,7 +91,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
-                        console.log('params: ' + JSON.stringify(s3Params));
                         $scope.upload[i] = $upload.upload({
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
