@@ -32,12 +32,17 @@ exports.getPropsForTenant = function(req, res) {
 				propJunctions.push(newJunc);
 	    	});
 
-	    	PropertyJunction.create(propJunctions, function(err, junctions) {
+	    	console.log('prop junctions: ' + JSON.stringify(propJunctions));
+
+	    	PropertyJunction.create(propJunctions, function(err) {
 	    		if(err) res.send(err);
-	    		console.log('created junctions: ' + JSON.stringify(junctions));
+	    		var insertedJunctions = [];
+				for (var i = 1; i < arguments.length; ++i) {
+				    insertedJunctions.push(arguments[i]);
+				}
 	    		var finalRes = {
 					"properties" : properties,
-					"junctions"	 : junctions
+					"junctions"	 : insertedJunctions
 				};
 				res.send(finalRes);
 	    	});
