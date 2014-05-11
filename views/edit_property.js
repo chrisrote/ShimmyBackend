@@ -4,6 +4,7 @@ var editProp = angular.module('editProp', ['angularFileUpload'])
 
         $http.get('/api/config').success(function(config) {
             $rootScope.config = config;
+            console.log('config: ' + JSON.stringify(config));
         });
     });
 
@@ -125,6 +126,7 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
+                        console.log('params: ' + JSON.stringify(s3Params));
                         $scope.upload[i] = $upload.upload({
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',

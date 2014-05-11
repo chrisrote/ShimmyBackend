@@ -1,16 +1,12 @@
-
-// set up ======================================================================
 var express   		= require('express');
 var app     		= express();
 var mongoose  		= require('mongoose');
 var passport 		= require('passport');
 var flash 	 		= require('connect-flash');
 
-
 // configuration ===============================================================
 var url = process.env.MONGOLAB_URI ||
-        process.env.MONGOHQ_URL ||
-        'mongodb://th:Shimmy@ds053638.mongolab.com:53638/shimmy';
+	'mongodb://th:Shimmy@ds053638.mongolab.com:53638/shimmy';
 var port = Number(process.env.PORT || 5000);
 
 mongoose.connect(url);

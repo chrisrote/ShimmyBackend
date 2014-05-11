@@ -5,6 +5,7 @@ var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootst
 
     $http.get('/api/config').success(function(config) {
         $rootScope.config = config;
+        console.log('config: ' + JSON.stringify(config));
       });
   });
 
@@ -14,6 +15,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.propertyId;
 	$scope.imageUploads = [];
   var s3_asset_folder = 'shimmy-production/'; 
+
 
   $scope.bed_options = [
         { name: '0', value: '0' }, 
@@ -36,7 +38,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
   $scope.bath_form = {type : $scope.bath_options[0].value};
 
   if($location['$$host'] == 'localhost') {
-    console.log('in local host');
     s3_asset_folder = 'shimmy-assets/'; 
   }
 
@@ -92,6 +93,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
+                        console.log('params: ' + JSON.stringify(s3Params));
                         $scope.upload[i] = $upload.upload({
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',
