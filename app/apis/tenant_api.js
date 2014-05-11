@@ -7,57 +7,53 @@ var Tenant				= require('../models/tenant');
 // Called when hitting route
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
+	console.log('tenant id: ' + req.body.tenant_id);
 	PropertyJunction.find({ tenant_id: req.body.tenant_id }, function(err, junctions) {
 	    if(err) res.send(err);
 	    
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
+	    	console.log('got a junc: ' + JSON.stringify(junc));
 	        prop_ids.push(junc.PropertyId); 
 	    });
 
-	    //nin means not in
-	    Property.find().nin('_id', prop_ids).exec(function(err, properties) {
-	    	res.send(properties);
+	    console.log('prop ids: ' + JSON.stringify(prop_ids));
+         
+	    Property.find(req.body.searchOpts).nin('_id', prop_ids).exec(function(err, properties) {
+	    	if(err) res.send(err);
+
+	    	var propJunctions = [];
+
+	    	properties.forEach(function(entry) {
+	    		var newJunc = { 
+	    			"email" 		: req.body.email,
+					"phone"			: req.body.phone,
+					"message"		: req.body.message,
+					"PropertyId"	: entry._id,
+					"tenant_id"    	: req.body.tenant_id
+				};
+				propJunctions.push(newJunc);
+	    	});
+
+	    	PropertyJunction.create(propJunctions, function(err, junctions) {
+	    		if(err) res.send(err);
+	    		var finalRes = {
+					"properties" : properties,
+					"junctions"	 : propJunctions
+				};
+				res.send(finalRes);
+	    	});
 	    }); 
 	});
 
 };
 
 
-	/*Property.find(function(err, props){
-		if(err) res.send(err);
-		console.log('properties: ' + JSON.stringify(props));
-		var propJunction = [];
-		props.forEach(function(entry) {
-			PropertyJunction.create({
-				email 		: req.body.email,
-				phone		: req.body.phone,
-				message		: req.body.message,
-				PropertyId	: entry._id,
-				tenant      : req.body.tenant_id
-			}, function(err, aPropJunction){
-				console.log('aJunction: ' + JSON.stringify(aPropJunction));
-				propJunctions.push(aPropJunction);
-			});
-		});
-
-		var finalRes = {
-			"properties" : props,
-			"junctions"	 : propJunctions
-		};
-		res.send(props);
-	}) */
-
-exports.getTestProps = function(req, res) {
-	Property.find(function(err, props){
-		res.send(props);
-	})
-};
-
 // Called when hitting route
 // /api/createPropJunctions
 exports.createPropJunctions = function(req, res) {
-	var newPropJunctions = req.body.property_junctions;
+	
+	/*var newPropJunctions = req.body.property_junctions;
 	console.log('got new property_junctions: ' + JSON.stringify(newPropJunctions));
 
 	newPropJunctions.forEach(function(entry) {
@@ -72,14 +68,13 @@ exports.createPropJunctions = function(req, res) {
 			if(err) res.send(err);
 			res.send('successfully created prop junctions');
 		});
-	});
+	});*/
 };
 
 // Called when hitting route
 // /api/createNewTenant
 exports.createNewTenant = function(req, res) {
 	var newTenant = req.body;
-	console.log('creating new tenant with params: ' + JSON.stringify(newTenant));
 	Tenant.create({
 		email			: newTenant.email,
 		phone  			: newTenant.phone,

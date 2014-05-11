@@ -18,7 +18,6 @@ module.exports = function(app, passport) {
 	app.post('/api/createPropJunctions', tenant_api.createPropJunctions);
 	app.post('/api/createNewTenant', tenant_api.createNewTenant);
 	app.put('/api/editTenant', tenant_api.editTenant);
-	app.get('/api/testProps', tenant_api.getTestProps);
 
 	// ========================================================================
 	// LANDLORD METHODS
