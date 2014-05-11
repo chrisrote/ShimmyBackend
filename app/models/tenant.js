@@ -2,9 +2,11 @@ var mongoose = require('mongoose');
 
 // define the schema for our user model
 var tenantSchema = mongoose.Schema({
-    email        : String,
-    phone		 : String,
-    searchOpts	 : {}
+    email        	: String,
+    phone		 	: String,
+    searchOpts	 	: {},
+    contactMessage	: String,
+    roomates		: [mongoose.Schema.Types.ObjectId]
 });
 
 

@@ -15,6 +15,6 @@ function editLandlordController($scope, $http) {
 		});
 
 	$scope.saveChanges = function() {
-
+		console.log('saving changes to my user');
 	};
 }

@@ -1,15 +1,24 @@
 // load the property model
-var Property = require('./models/property');
-var Landlord = require('./models/landlord');
-var https = require('https');
-var crypto = require('crypto');
-var path = require('path');
+var Property 	= require('./models/property');
+var Landlord 	= require('./models/landlord');
+var https 		= require('https');
+var crypto 		= require('crypto');
+var path 		= require('path');
 
-var prop_api = require('./apis/prop_api'),
-	aws_api = require('./apis/aws_api');   
+var prop_api 	= require('./apis/prop_api'),
+	aws_api 	= require('./apis/aws_api'),
+	tenant_api	= require('./apis/tenant_api');   
 
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
+
+	// ========================================================================
+	// TENANT METHODS
+	// ========================================================================
+
+	app.get('/api/propsForTenant', tenant_api.getPropsForTenant);
+	app.post('/api/createPropJunctions', tenant_api.createPropJunctions);
+	app.post('/api/createNewTenant', tenant_api.createNewTenant);
 
 	// ========================================================================
 	// LANDLORD METHODS
@@ -21,44 +30,12 @@ module.exports = function(app, passport) {
 	// PROPERTY METHODS
 	// ========================================================================
 
-	// POST DATA TO CREATE PROPERTY JUNCTIONS =================================
-	app.post('/api/property_junctions', prop_api.postPropJunctions);
-
-	// GET ALL PROPERTIES =====================================================
-	app.get('/api/property', prop_api.getAllProperties);
-
-	// GET PROPERTY BY ID ====================================================
 	app.get('/api/propertyById/:property_id', isLoggedIn, prop_api.propertyById);
-
-	// CREATE PROPERTY ========================================================
-	app.post('/api/property', isLoggedIn, prop_api.createProperties);
-
-	// SET PROPERTY TO RENTED OR VACANT =======================================
-	app.put('/api/rentalStatus/:property_id/:rentStatus', isLoggedIn, prop_api.propertyRentalStatusChanged);
-
-	// UPDATE THE PROPERTY IMAGE ARRAY ========================================
-	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImages);
-
-	// UPDATE PROPERTY ========================================================
+	app.post('/api/property', isLoggedIn, prop_api.createProperty);
 	app.put('/api/updateProperty', isLoggedIn, prop_api.updateProperty);
-
-	// UPDATE PROPERTY IMAGE ARRAY WITH NEW ARRAY	===========================
-	app.put('/api/updatePropImagesWithNewArr/:property_id', isLoggedIn, prop_api.changePropertyImageArr);
-
-	// DELETE PROPERTY ========================================================
+	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImageArr);
+	app.put('/api/updatePropImagesWithNewArr/:property_id', isLoggedIn, prop_api.newPropertyImageArr);
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
-
-	app.get('/new_property', isLoggedIn, function(req, res) {
-		res.render('new_property.ejs', {
-			user : req.user // get the user out of session and pass to template
-		});
-	});
-
-	app.get('/edit_property/:property_id', isLoggedIn, function(req, res){
-		res.render('edit_property.ejs', {
-			property_id : req.params.property_id
-		});
-	});
 
 	// ========================================================================
 	// AMAZON S3 POLICY 
@@ -68,7 +45,7 @@ module.exports = function(app, passport) {
 	app.get('/api/config', aws_api.getClientConfig);
 
 	// ========================================================================
-	// AUTHENTICATION METHODS
+	// AUTHENTICATION / RENDER PAGE METHODS
 	// ========================================================================
 
 	// HOME PAGE (with login links) ===========================================
@@ -125,11 +102,25 @@ module.exports = function(app, passport) {
 		res.redirect('/');
 	});
 
-	app.get('*', function(req, res){
+	/*app.get('*', function(req, res){
 		if(req.isAuthenticated()) res.redirect('/profile');
 		else res.render('index.ejs');
+	});*/
+
+	app.get('/new_property', isLoggedIn, function(req, res) {
+		res.render('new_property.ejs', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
+
+	app.get('/edit_property/:property_id', isLoggedIn, function(req, res){
+		res.render('edit_property.ejs', {
+			property_id : req.params.property_id
+		});
 	});
 };
+
+
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

@@ -5,7 +5,7 @@ var https 				= require('https');
 
 // ===================================================
 // CREATE NEW PROPERTY FROM UI
-exports.createProperties = function(req, res) {
+exports.createProperty = function(req, res) {
 	// Callout to Google Geocoding API
 	var geocode_API_key = 'AIzaSyCa5lOnYd8klc02w9Up2mETb-uPwou-adg';
 	var addr = req.body.street.split(' ').join('+');
@@ -24,8 +24,6 @@ exports.createProperties = function(req, res) {
 	};
 
 	var google_req = https.request(options, function(google_res) {
-		console.log('STATUS: ' + google_res.statusCode);
-		console.log('HEADERS: ' + JSON.stringify(google_res.headers));
 		google_res.setEncoding('UTF8');
 		google_res.on('data', function(chunk) {
 			my_result += chunk;
@@ -35,7 +33,6 @@ exports.createProperties = function(req, res) {
 			var parsedJSON = JSON.parse(my_result);
 			latitude = parsedJSON.results[0].geometry.location.lat;
 			longitude = parsedJSON.results[0].geometry.location.lng;
-			console.log('creating property with state: ' + req.body.state);
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
@@ -65,17 +62,7 @@ exports.createProperties = function(req, res) {
 };
 
 
-// ===================================================
-// Get all properties for the email address entered by
-// the user. Do not return properties that already have
-// a property junction created
-exports.getPropertiesForUserEmail = function(req, res) {
-	var filters = req.params.filters;
-
-};
-
 exports.updateProperty = function(req, res) {
-	console.log('updating id: ' + req.body._id);
 	var myProp = new Property({
   		name 			: req.body.name,
 		city			: req.body.city,
@@ -92,7 +79,6 @@ exports.updateProperty = function(req, res) {
 
 	var upsertData = myProp.toObject();
 	delete upsertData._id;
-	console.log('upsertData: ' + JSON.stringify(upsertData));
 
 	Property.findOneAndUpdate({ _id : req.body._id }, {$set : upsertData}, function(err, property) {
 		if(err) res.send('Got an Error: ' + err);
@@ -100,14 +86,8 @@ exports.updateProperty = function(req, res) {
 	});
 };
 
-// ===================================================
-// Update a property to rented
-exports.propertyRentalStatusChanged = function(req, res) {
-	var property_id = req.params.property_id;
-	var rentStatus = req.params.rentStatus;
-};
 
-exports.changePropertyImageArr = function(req, res) {
+exports.newPropertyImageArr = function(req, res) {
 	var query = { _id : req.params.property_id };
 	var imageArray = req.body['imageArr'];
 	var updates = { imageURLs : imageArray };
@@ -118,7 +98,7 @@ exports.changePropertyImageArr = function(req, res) {
 
 // ===================================================
 // Update Property Images
-exports.updatePropertyImages = function(req, res) {
+exports.updatePropertyImageArr = function(req, res) {
 	var query = { _id : req.params.property_id };
 	var myImages = [];
 	var imageArray = req.body['imageArr'];
@@ -141,30 +121,9 @@ exports.updatePropertyImages = function(req, res) {
 };
 
 exports.propertyById = function(req, res) {
-	console.log('getting property by id: ' + req.params.property_id);
 	Property.find({'_id': req.params.property_id }, function(err, property) {
 		if(err) res.send(err);
 		res.send(property);
-	});
-};
-
-// ===================================================
-// Receive property junctions
-exports.postPropJunctions = function(req, res) {
-	var email = req.params.user_email;
-	var phone = req.params.phone;
-
-	// ============================================================
-	// SEE HOW TO MASS INSERT RECORDS MONGODB!!!!!
-	// ============================================================
-};
-
-// ===================================================
-// GET ALL PROPERTIES METHOD -- Testing purposes
-exports.getAllProperties = function(req, res) {
-	Property.find(function(err, properties) {
-		if(err) res.send(err);
-		res.json(properties);
 	});
 };
 
@@ -186,8 +145,6 @@ exports.deleteProperty = function(req, res) {
 		});
 	});
 };
-
-
 
 
 exports.getLandlord = function(req, res) {

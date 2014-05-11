@@ -9,7 +9,7 @@ describe('Routing', function() {
 
   // run all setup operations
   before(function(done) {
-    mongoose.connect('mongodb://localhost/27017/test');
+    mongoose.connect('mongodb://th:Shimmy@ds053638.mongolab.com:53638/shimmy');
     done();
   });
 
@@ -27,29 +27,3 @@ describe('Routing', function() {
   });
 });
 
-
-/*
-it('should correctly update an existing account', function(done){
-	var body = {
-		firstName: 'JP',
-		lastName: 'Berd'
-	};
-	request(url)
-		.put('/api/profiles/vgheri')
-		.send(body)
-		.expect('Content-Type', /json/)
-		.expect(200) //Status code
-		.end(function(err,res) {
-			if (err) {
-				throw err;
-			}
-			// Should.js fluent syntax applied
-			res.body.should.have.property('_id');
-	                res.body.firstName.should.equal('JP');
-	                res.body.lastName.should.equal('Berd');
-	                res.body.creationDate.should.not.equal(null);
-			done();
-		});
-	});
-  });
-  */
