@@ -2,13 +2,14 @@
 
 var AWS = require('aws-sdk'),
     crypto = require('crypto'),
-    config = require('./config/aws_config.json'),
     createS3Policy,
     getExpiryTime;
 
-var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || config.accessKeyId;
-var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || config.secretAccessKey;
-var S3_BUCKET = process.env.S3_BUCKET || config.bucket;
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+var S3_BUCKET = process.env.S3_BUCKET;
+
+console.log('aws: ' + AWS_ACCESS_KEY);
 
 getExpiryTime = function () {
     var _date = new Date();

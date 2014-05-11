@@ -16,9 +16,6 @@ var port = Number(process.env.PORT || 5000);
 mongoose.connect(url);
 require('./config/passport')(passport); // pass passport for configuration
 
-var AWS = require('aws-sdk');
-AWS.config.loadFromPath('./app/apis/config/aws_config.json');
-
 app.configure(function() {
 
 	// set up our express application
