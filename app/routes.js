@@ -16,7 +16,7 @@ module.exports = function(app, passport) {
 	// TENANT METHODS
 	// ========================================================================
 
-	app.get('/api/propsForTenant', tenant_api.getPropsForTenant);
+	app.post('/api/propsForTenant', tenant_api.getPropsForTenant);
 	app.post('/api/createPropJunctions', tenant_api.createPropJunctions);
 	app.post('/api/createNewTenant', tenant_api.createNewTenant);
 

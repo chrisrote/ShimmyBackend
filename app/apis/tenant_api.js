@@ -8,6 +8,26 @@ var Tenant				= require('../models/tenant');
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
 	Property.find(function(err, props){
+		if(err) res.send(err);
+		console.log('properties: ' + JSON.stringify(props));
+		var propJunction = [];
+		props.forEach(function(entry) {
+			PropertyJunction.create({
+				email 		: req.body.email,
+				phone		: req.body.phone,
+				message		: req.body.message,
+				PropertyId	: entry._id,
+				tenant      : req.body.tenant_id
+			}, function(err, aPropJunction){
+				console.log('aJunction: ' + JSON.stringify(aPropJunction));
+				propJunctions.push(aPropJunction);
+			});
+		});
+
+		var finalRes = {
+			"properties" : props,
+			"junctions"	 : propJunctions
+		};
 		res.send(props);
 	})
 };
