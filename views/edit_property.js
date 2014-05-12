@@ -15,12 +15,6 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
     $scope.isRentVals = {};
     var s3_asset_folder = 'shimmy-assets/';
 
-    /*if($location['$$host'] == 'localhost') {
-        s3_asset_folder = 'shimmy-assets/'; 
-    }*/
-
-    console.log('asset folder: ' + s3_asset_folder);
-
 
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 

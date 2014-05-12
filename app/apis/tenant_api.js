@@ -46,9 +46,7 @@ exports.getPropsForTenant = function(req, res) {
 	    	});
 	    }); 
 	});
-
 };
-
 
 // Called when hitting route
 // /api/createPropJunctions
@@ -57,10 +55,13 @@ exports.createPropJunctions = function(req, res) {
 	console.log('got new property_junctions: ' + JSON.stringify(newPropJunctions));
 	newPropJunctions.forEach(function(entry) {
 		PropertyJunction.update({ _id : entry._id }, { swipeStatus : entry.swipeStatus}, function(err, affected) {
-			console.log('updated');
+
+			if(entry.swipeStatus == 0) {
+				
+			}
+			res.send('{updated :' + newPropJunctions.length + '}');
 		});
 	});
-	res.send('updated ' + newPropJunctions.length + ' junctions');
 };
 
 // Called when hitting route
@@ -91,4 +92,13 @@ exports.editTenant = function(req, res) {
 	}, function(err, affected) {
 		console.log('number of tenants updated: ' + affected);
 	});
+};
+
+
+exports.getAllProps = function(req, res) {
+	Property.find({}, function(err, properties) {
+		if(err) res.send(err);
+		res.send(properties);
+	});
+
 };
