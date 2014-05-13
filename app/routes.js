@@ -30,7 +30,7 @@ module.exports = function(app, passport) {
 	// PROPERTY METHODS
 	// ========================================================================
 
-	app.get('/api/propertyById/:property_id', isLoggedIn, prop_api.propertyById);
+	app.get('/api/propertyById/:property_id', prop_api.propertyById);
 	app.post('/api/property', isLoggedIn, prop_api.createProperty);
 	app.put('/api/updateProperty', isLoggedIn, prop_api.updateProperty);
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImageArr);
