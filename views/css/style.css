@@ -1,18 +1,18 @@
 .navbar {
-	background-color:#25242C;
+	background-color:#2B2B2B;   /*#558C89;  #25242C */
 }
 
 .landlordtext {
-	color:#39B1C6;
+	color:#D9853B;
 }
 
 .shimmytext {
-	color:#1FD26A;
+	color:#ECECEA;
 }
 
 body {
-	color:#FFFFFF;
-	background-color:#32313B;
+	color:#2B2B2B;
+	background-color:#F6F6F6;		/* #32313B */
 	font-family:"Helvetica Neue";
 	font-weight:lighter;
 	letter-spacing:1.5px
@@ -20,7 +20,6 @@ body {
 
 .form-fonts {
 	font-family:"Helvetica Neue";
-	font-weight:lighter;
 	letter-spacing:1.3px;
 }
 

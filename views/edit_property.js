@@ -19,7 +19,7 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 
         { name: 'True', value: 'true' }
-    ];
+    ]; 
 
     $scope.bed_options = [
         { name: '0', value: '0' }, 
@@ -112,11 +112,29 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
 		$window.location.href = '/profile';	
 	};
 
+    function compress(source_img_obj, quality, output_format) {
+        var mime_type = "image/jpeg";
+        if(output_format!=undefined && output_format=="png"){
+            mime_type = "image/png";
+        }
+
+        var cvs = document.createElement('canvas');
+        cvs.width = source_img_obj.naturalWidth;
+        cvs.height = source_img_obj.naturalHeight;
+        var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0);
+        var newImageData = cvs.toDataURL(mime_type, quality/100);
+        var result_image_obj = new Image();
+        result_image_obj.src = newImageData;
+        return result_image_obj;
+    }
+
 	$scope.onFileSelect = function ($files) {
             $scope.files = $files;
             $scope.upload = [];
             for (var i = 0; i < $files.length; i++) {
+                // var file = compress($files[i], 50);
                 var file = $files[i];
+                console.log('files: ' + JSON.stringify(file));
                 file.progress = parseInt(0);
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
@@ -145,7 +163,6 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
                                     key: data.postresponse.key,
                                     etag: data.postresponse.etag
                                 };
-
                                 var myArr = [];
                                 myArr.push(parsedData);
                                 var myImages = {};

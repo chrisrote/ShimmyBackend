@@ -91,6 +91,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
+                        //var fileToUpload = compress(file);
                         $scope.upload[i] = $upload.upload({
                             url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
                             method: 'POST',

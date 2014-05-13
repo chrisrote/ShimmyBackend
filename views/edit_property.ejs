@@ -105,8 +105,9 @@
 		                
 		        <div id="gal-images" class="col-md-12 col-sm-4 col-xs-6" style="padding-bottom:.5cm;">
 		           	<div class="col-md-3 col-sm-4 col-xs-6" ng-repeat="imageURL in my_property.imageURLs">
-					  	<img src={{imageURL}} ng-click="image.selected = !image.selected; select_image(imageURL);"  style="max-height: 120px;" ng-class="{ 'selected-image': image.selected }"  alt="" title="">
+					  	<img src={{imageURL}} ng-click="image.selected = !image.selected; select_image(imageURL);"  style="max-height: 150px;" ng-class="{ 'selected-image': image.selected }"  alt="" title="">
 					</div>
+					<br />
 		        </div> 
 		        <div class="image-buttons">
 			           	<button class="btn btn-danger btm-sm" ng-show="selected_images.length > 0" ng-click="delete_selected_images()">Delete Selected Images</button>
