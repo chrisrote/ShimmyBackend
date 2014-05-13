@@ -36,6 +36,7 @@ module.exports = function(app, passport) {
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImageArr);
 	app.put('/api/updatePropImagesWithNewArr/:property_id', isLoggedIn, prop_api.newPropertyImageArr);
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
+	app.post('/api/uploadImages/:property_id', isLoggedIn, prop_api.uploadImage);
 
 	// ========================================================================
 	// AMAZON S3 POLICY 

@@ -25,7 +25,7 @@
 		<h3 class="form-fonts" ><span class="glyphicon glyphicon-pencil"></span>  Edit Property - {{ my_property.name }} </h3>
 		<button class="btn btn-warning btn-sm" ng-click="changeShowDetails()" ng-show="!showDetails">Edit Details</button>
 		<button class="btn btn-warning btn-sm" ng-click="changeShowImages()" ng-show="showDetails">Edit Images</button>
-			
+
 			<div class="input-text-form" style="padding-top:10px;" ng-show="showDetails">
 				<div class="row">
 					<div class="col-md-3 form-group">
@@ -92,7 +92,7 @@
 		            <label class="form-fonts" for="photos">Add Pictures</label>
 		            <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
 		            <p class="help-block">Select pictures</p>
-		            
+
 		            <div ng-repeat="file in files" class="container">
 		                <div class="progress">
 		                    <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
@@ -102,7 +102,7 @@
 		                <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
 		            </div>
 		        </div>
-		                
+
 		        <div id="gal-images" class="col-md-12 col-sm-4 col-xs-6" style="padding-bottom:.5cm;">
 		           	<div class="col-md-3 col-sm-4 col-xs-6" ng-repeat="imageURL in my_property.imageURLs">
 					  	<img src={{imageURL}} ng-click="image.selected = !image.selected; select_image(imageURL);"  style="max-height: 150px;" ng-class="{ 'selected-image': image.selected }"  alt="" title="">

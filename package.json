@@ -16,6 +16,7 @@
     "passport-local" : "~0.1.6",
     "connect-flash" : "~0.1.1",
     "winston": "0.6.x",
+    "gm"    : "1.16.0",
     "bcrypt-nodejs" : "latest",
     "angular-wizard": "latest"
   },

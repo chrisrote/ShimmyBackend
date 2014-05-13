@@ -7,14 +7,12 @@ var editProp = angular.module('editProp', ['angularFileUpload'])
         });
     });
 
-function editPropController($scope, $location, $http, $window, $upload, $rootScope, $route) {
+function editPropController($scope, $location, $http, $window, $timeout, $upload, $rootScope, $route) {
 	$scope.prop_id = myProp;
 	$scope.my_property;
 	$scope.showDetails = true;
     $scope.selected_images = [];
     $scope.isRentVals = {};
-    var s3_asset_folder = 'shimmy-assets/';
-
 
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 
@@ -112,38 +110,29 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
 		$window.location.href = '/profile';	
 	};
 
-    function compress(source_img_obj, quality, output_format) {
-        var mime_type = "image/jpeg";
-        if(output_format!=undefined && output_format=="png"){
-            mime_type = "image/png";
-        }
 
-        var cvs = document.createElement('canvas');
-        cvs.width = source_img_obj.naturalWidth;
-        cvs.height = source_img_obj.naturalHeight;
-        var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0);
-        var newImageData = cvs.toDataURL(mime_type, quality/100);
-        var result_image_obj = new Image();
-        result_image_obj.src = newImageData;
-        return result_image_obj;
-    }
+    $scope.hasUploader = function(index) {
+        return $scope.upload[index] != null;
+    };
+    $scope.abort = function(index) {
+        $scope.upload[index].abort(); 
+        $scope.upload[index] = null;
+    };
 
-	$scope.onFileSelect = function ($files) {
-            $scope.files = $files;
+    $scope.onFileSelect = function($files) {
+        $scope.files = $files;
             $scope.upload = [];
             for (var i = 0; i < $files.length; i++) {
-                // var file = compress($files[i], 50);
                 var file = $files[i];
-                console.log('files: ' + JSON.stringify(file));
                 file.progress = parseInt(0);
                 (function (file, i) {
                     $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
                         var s3Params = response;
                         $scope.upload[i] = $upload.upload({
-                            url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
+                            url: 'https://shimmy-assets-tyler.s3.amazonaws.com/',
                             method: 'POST',
                             data: {
-                                'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + file.name,
+                                'key' : 'shimmy-assets/' + Math.round(Math.random()*10000) + '$$' + file.name,
                                 'acl' : 'public-read',
                                 'Content-Type' : file.type,
                                 'AWSAccessKeyId': s3Params.AWSAccessKeyId,
@@ -184,4 +173,5 @@ function editPropController($scope, $location, $http, $window, $upload, $rootSco
                 }(file, i));
             }
         };
+
 }

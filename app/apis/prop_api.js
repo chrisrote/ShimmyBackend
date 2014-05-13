@@ -2,6 +2,13 @@ var Property 			= require('../models/property');
 var PropertyJunction 	= require('../models/property_junction');
 var Landlord 			= require('../models/landlord');
 var https 				= require('https');
+var http 				= require('http');
+var AWS = require('aws-sdk'),
+    crypto = require('crypto');
+
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+var S3_BUCKET = process.env.S3_BUCKET;
 
 // ===================================================
 // CREATE NEW PROPERTY FROM UI
@@ -61,6 +68,73 @@ exports.createProperty = function(req, res) {
 	google_req.end();
 };
 
+getExpiryTime = function () {
+    var _date = new Date();
+    return '' + (_date.getFullYear()) + '-' + (_date.getMonth() + 1) + '-' +
+        (_date.getDate() + 1) + 'T' + (_date.getHours() + 3) + ':' + '00:00.000Z';
+};
+
+createS3Policy = function(contentType, callback) {
+    var date = new Date();
+    var s3Policy = {
+        'expiration': getExpiryTime(),
+        'conditions': [
+            ['starts-with', '$key', 'shimmy-assets/'],
+            {'bucket': S3_BUCKET},
+            {'acl': 'public-read'},
+            ['starts-with', '$Content-Type', contentType],
+            {'success_action_status' : '201'}
+        ]
+    };
+    var stringPolicy = JSON.stringify(s3Policy);
+    var base64Policy = new Buffer(stringPolicy, 'utf-8').toString('base64');
+    var signature = crypto.createHmac('sha1', AWS_SECRET_KEY)
+                        .update(new Buffer(base64Policy, 'utf-8')).digest('base64');
+
+    var s3Credentials = {
+        s3Policy: base64Policy,
+        s3Signature: signature,
+        AWSAccessKeyId: AWS_ACCESS_KEY
+    };
+    callback(s3Credentials);
+};
+
+exports.uploadImage = function(req, res) {
+	var prop_id = req.params.property_id;
+	console.log('got a file: ' + JSON.stringify(req.files));
+	console.log('got a type: ' + JSON.stringify(req.files.file.type));
+
+	createS3Policy(req.files.file.type , function (creds, err) {
+		console.log('got creds: ' + JSON.stringify(creds));
+		var options = {
+  			port: 443,
+  			path: req.file.path,
+	  		url: 'https://shimmy-assets-tyler.s3.amazonaws.com/',
+            method: 'POST',
+            data: {
+               'key' : 'shimmy-assets/' + Math.round(Math.random()*10000) + '$$' + req.files.file.name,
+               'acl' : 'public-read',
+               'Content-Type' : req.files.file.type,
+                'AWSAccessKeyId': creds.AWSAccessKeyId,
+                'success_action_status' : '201',
+                'Policy' : creds.s3Policy,
+                'Signature' : creds.s3Signature
+            },
+            file: req.files.file,
+		};
+
+		var amazon_req = https.request(options, function(amazon_res) {
+			amazon_res.setEncoding('UTF8');
+			console.log('uploading');
+			// console.log('amazon res: ' + JSON.stringify(amazon_res));
+		});
+
+		/*amazon_req.on('error', function(e) {
+	  		res.send(e);
+		});*/
+		amazon_req.end();
+	});
+};
 
 exports.updateProperty = function(req, res) {
 	var myProp = new Property({
