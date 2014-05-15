@@ -10,7 +10,8 @@ var landlordSchema = mongoose.Schema({
         email        : String,
         password     : String,
         phone		 : String,
-        city		 : String
+        city		 : String,
+        building     : String
     }
 
 });

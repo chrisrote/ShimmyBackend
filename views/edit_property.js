@@ -111,18 +111,31 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
 	};
 
 
-    $scope.hasUploader = function(index) {
-        return $scope.upload[index] != null;
-    };
-    $scope.abort = function(index) {
-        $scope.upload[index].abort(); 
-        $scope.upload[index] = null;
+    var compress = function(source_img_obj, quality, output_format){
+             
+        var mime_type = "image/jpeg";
+        if(output_format != undefined && output_format == "png"){
+            mime_type = "image/png";
+        }
+        var cvs = document.createElement('canvas');
+        //console.log('cvs: ' + JSON.stringify(cvs));
+        //console.log('source width: ' + source_img_obj.naturalWidth);
+        //console.log('source height: ' + source_img_obj.naturalHeight);
+        var ratio = 250 / source_img_obj.naturalHeight;
+        cvs.width = ratio * source_img_obj.naturalWidth;
+        cvs.height = 250;
+        var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0);
+        var newImageData = cvs.toDataURL(mime_type, ratio/100);
+        var result_image_obj = new Image();
+        result_image_obj.src = newImageData;
+        return result_image_obj;
     };
 
     $scope.onFileSelect = function($files) {
         $scope.files = $files;
             $scope.upload = [];
             for (var i = 0; i < $files.length; i++) {
+                console.log('file: ' + JSON.stringify($files[i]));
                 var file = $files[i];
                 file.progress = parseInt(0);
                 (function (file, i) {

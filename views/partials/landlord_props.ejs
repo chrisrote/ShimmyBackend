@@ -1,18 +1,12 @@
 <div class="table-responsive">
-  			<table class="table">
+  			<table class="table" ng-controller="selectPropController">
     			<tbody>  
     				<% for(var i=0; i < myProps.length; i++) { %>
           			<tr>  
           				<td><img src=<%= myProps[i].imageURLs[0] %> class="img-responsive" style="max-height: 70px;" alt="" title=""></td>
-            			<td><%= myProps[i].name %></td>  
+            			<td ng-click()><%= myProps[i].name %></td>  
             			<td>$<%= myProps[i].price %></td>  
-            			<td>
-            				<% if(myProps[i].is_rented) { %>
-            					Rented
-            				<% } else { %>
-            					<p style="color:#74AFAD;font-weight:bold;">Vacant</p>
-            				<% } %>
-            			</td>
+            			<td style="color:#74AFAD;font-weight:bold;">myProps[i].is_rented</td>
             			<td> 
             				<button type="button" class="editButton btn btn-default btn-sm" data-product-id=<%= myProps[i]._id %>>
   								<span class="glyphicon glyphicon-edit"></span> Edit Property
@@ -21,6 +15,7 @@
 							<button data-bb="dialog" type="button" class="deleteButton btn btn-danger btn-sm" data-product-id=<%= myProps[i]._id %>>
   								<span class="glyphicon glyphicon-trash"></span> Delete Property
 							</button>
+              
 						</td>
           			</tr>
           			<% } %>

@@ -7,6 +7,7 @@ module.exports = mongoose.model('Property_Junction', {
 	message			: String,
 	PropertyId		: mongoose.Schema.Types.ObjectId,
 	tenant_id 		: mongoose.Schema.Types.ObjectId,
+	LandlordId		: mongoose.Schema.Types.ObjectId,
 	swipeStatus		: Number			// Status for liked = 1, contact = 0, or don't contact = 2
 });
 

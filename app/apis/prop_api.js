@@ -1,6 +1,7 @@
 var Property 			= require('../models/property');
 var PropertyJunction 	= require('../models/property_junction');
 var Landlord 			= require('../models/landlord');
+var Neighborhood 		= require('../models/neighborhood');
 var https 				= require('https');
 var http 				= require('http');
 var AWS = require('aws-sdk'),
@@ -38,8 +39,9 @@ exports.createProperty = function(req, res) {
 
 		google_res.on('end', function() {
 			var parsedJSON = JSON.parse(my_result);
-			latitude = parsedJSON.results[0].geometry.location.lat;
-			longitude = parsedJSON.results[0].geometry.location.lng;
+			console.log('parsed json: ' + JSON.stringify(parsedJSON));
+			latitude = parsedJSON.results[0].geometry.location.lat || 0;
+			longitude = parsedJSON.results[0].geometry.location.lng || 0;
 			Property.create({
 				name 			: req.body.name,
 				price			: req.body.price,
@@ -68,73 +70,6 @@ exports.createProperty = function(req, res) {
 	google_req.end();
 };
 
-getExpiryTime = function () {
-    var _date = new Date();
-    return '' + (_date.getFullYear()) + '-' + (_date.getMonth() + 1) + '-' +
-        (_date.getDate() + 1) + 'T' + (_date.getHours() + 3) + ':' + '00:00.000Z';
-};
-
-createS3Policy = function(contentType, callback) {
-    var date = new Date();
-    var s3Policy = {
-        'expiration': getExpiryTime(),
-        'conditions': [
-            ['starts-with', '$key', 'shimmy-assets/'],
-            {'bucket': S3_BUCKET},
-            {'acl': 'public-read'},
-            ['starts-with', '$Content-Type', contentType],
-            {'success_action_status' : '201'}
-        ]
-    };
-    var stringPolicy = JSON.stringify(s3Policy);
-    var base64Policy = new Buffer(stringPolicy, 'utf-8').toString('base64');
-    var signature = crypto.createHmac('sha1', AWS_SECRET_KEY)
-                        .update(new Buffer(base64Policy, 'utf-8')).digest('base64');
-
-    var s3Credentials = {
-        s3Policy: base64Policy,
-        s3Signature: signature,
-        AWSAccessKeyId: AWS_ACCESS_KEY
-    };
-    callback(s3Credentials);
-};
-
-exports.uploadImage = function(req, res) {
-	var prop_id = req.params.property_id;
-	console.log('got a file: ' + JSON.stringify(req.files));
-	console.log('got a type: ' + JSON.stringify(req.files.file.type));
-
-	createS3Policy(req.files.file.type , function (creds, err) {
-		console.log('got creds: ' + JSON.stringify(creds));
-		var options = {
-  			port: 443,
-  			path: req.file.path,
-	  		url: 'https://shimmy-assets-tyler.s3.amazonaws.com/',
-            method: 'POST',
-            data: {
-               'key' : 'shimmy-assets/' + Math.round(Math.random()*10000) + '$$' + req.files.file.name,
-               'acl' : 'public-read',
-               'Content-Type' : req.files.file.type,
-                'AWSAccessKeyId': creds.AWSAccessKeyId,
-                'success_action_status' : '201',
-                'Policy' : creds.s3Policy,
-                'Signature' : creds.s3Signature
-            },
-            file: req.files.file,
-		};
-
-		var amazon_req = https.request(options, function(amazon_res) {
-			amazon_res.setEncoding('UTF8');
-			console.log('uploading');
-			// console.log('amazon res: ' + JSON.stringify(amazon_res));
-		});
-
-		/*amazon_req.on('error', function(e) {
-	  		res.send(e);
-		});*/
-		amazon_req.end();
-	});
-};
 
 exports.updateProperty = function(req, res) {
 	var myProp = new Property({
@@ -220,6 +155,37 @@ exports.deleteProperty = function(req, res) {
 	});
 };
 
+exports.getNeighborhoods = function(req, res) {
+	Neighborhood.find({}, function(err, neighborhoods) {
+		if(err) res.send(err);
+		res.send(neighborhoods);
+	});
+};
+
+
+exports.getPropsByLandlord = function(req, res) {
+	var landlord_id = req.params.landlord_id;
+
+	Property.find({ 'landlord_id' : landlord_id}, function(err, properties) {
+		if(err) res.send(err);
+		console.log('got properties: ' + JSON.stringify(properties));
+		res.send(properties);
+	});
+};
+
+exports.getPropJunctionsForLandlord = function(req, res) {
+	var landlord_id = req.params.landlord_id;
+	var prop_id = req.params.property_id;
+
+	PropertyJunction.find({ 'landlord_id' 	: landlord_id,
+							'PropertyId' 	: prop_id,
+							'swipeStatus'	: 0 
+	}, function(err, junctions) {
+		if(err) res.send(err);
+		console.log('got junctions: ' + JSON.stringify(junctions));
+		res.send(junctions);
+	});
+};
 
 exports.getLandlord = function(req, res) {
 	var landlord_id = req.params.landlord_id;

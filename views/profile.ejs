@@ -3,38 +3,49 @@
 <head>
 	<title>Shimmy - Home</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+ 	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
+  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+  	<script type="text/javascript" src="/profile.js"></script>
+    <script>var my_user = "<%= user %>";</script>
 
 	<style>
 		body 		{ padding-top:80px; word-wrap:break-word; }
 	</style>
 </head>
-<body>
+<body ng-app="selectProp">
 <% include partials/navbar.ejs %>
 <div class="container">
 	<div class="row">
-		<h1><span class="fa fa-home"> My Properties (<%= myProps.length %>) <a href="/new_property" style="background-color:#74AFAD;" class="btn btn-success btn-sm">List New Property</a></h1>
+		<h1><span class="fa fa-home"> My Properties <a href="/new_property" style="background-color:#74AFAD;" class="btn btn-success btn-sm">List New Property</a></h1>
 
-		<%- include partials/landlord_props.ejs %>
+		<div class="table-responsive">
+  			<table class="table" ng-controller="selectPropController">
+    			<tbody>  
+    				<tr ng-repeat="property in properties">
+    					<td><img ng-src="{{property.imageURLs[0]}}" class="img-responsive" style="max-height: 70px;" alt="" title=""></td>
+    					<td>{{property.name}}</td> 
+    					<td>${{property.price}}</td>
+    					<td ng-if="property.is_rented">Rented</td>
+    					<td ng-if="!property.is_rented"><p style="color:#74AFAD;font-weight:bold;">Vacant</p></td>
+    					<td> 
+            				<button type="button" class="btn btn-default btn-sm" ng-click="editProperty(property._id)">
+  								<span class="glyphicon glyphicon-edit"></span> Edit Property
+							</button>
+
+							<button type="button" class="btn btn-danger btn-sm" ng-click="deleteProperty(property._id)" >
+  								<span class="glyphicon glyphicon-trash"></span> Delete Property
+							</button>
+						</td>
+    				</tr>
+          		</tbody> 
+  			</table>
+		</div>
 	</div>
 </div>
-
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="/js/bootstrap.js"></script>
-<script src="/js/bootbox.js"></script>
-<script src="/js/displayCallback.js"></script>
-
-<script>
-        $(function() {
-            displayCallback.init({
-                "selector": ".bb-alert"
-            });
-        });
-    </script>
-
-<script type="text/javascript" src="/profile.js"></script>
 
 </body>
 </html>

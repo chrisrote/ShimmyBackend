@@ -1,42 +1,51 @@
-$('.editButton').click(function(){             
-    var prop_id = $(this).data('productId')
-    window.location.href = '/edit_property/' + prop_id;
-});
 
-$('.deleteButton').click(function(){             
-    var prop_id = $(this).data('productId');
+var selectProp = angular.module('selectProp', []);
 
-    bootbox.dialog({
-      message: "deleting property",
-	  title: "Are you sure you want to delete this property?",
-	  buttons: {
-	    success: {
-	      label: "Cancel",
-	      className: "btn",
-	      callback: function() {
-	      }
-	    },
-	    danger: {
-	      label: "Delete Property",
-	      className: "btn-danger",
-	      callback: function() {
-	      	$.ajax({
-	      		type: 'DELETE',
-        		url: '/api/property/' + prop_id,
-        		dataType: "json",
-        		cache: false,
-        		timeout: 5000,
-        		success: function(data) {
-                    console.log('my data: ' + JSON.stringify(data));
-            		displayCallback.show("Property Successfully Deleted.");
-                    location.reload();
-        		}, 
-        		error: function(jqXHR, textStatus, errorThrown) {
-        		}
-    		});
-	      }
-	    }
-	  }
-	});
-});
+function selectPropController($scope, $http, $window) {
+	var landlord_id = my_user;
+	$scope.properties = [];
+	$scope.landlord_id = landlord_id
 
+	$http.get('/api/getPropsByLandlord/' + landlord_id)
+		.success(function(data) {
+			console.log('success getting props: ' + JSON.stringify(data));
+			$scope.properties = data;
+		})
+		.error(function(err){	
+			console.log('error getting props by landlord');
+		});
+
+	$scope.showProp = function(landlord_id, prop_id) {
+		$http.get('/api/getPropJunctionsForLandlord/' + landlord_id + '/' + prop_id)
+			.success(function(data){
+				console.log('got success: ' + JSON.stringify(data));
+			})
+			.error(function(err){
+				console.log('got error: ' + JSON.stringify(err));
+			});
+	};
+
+	$scope.editProperty = function(prop_id) {
+		console.log('editing prop with id: ' + prop_id);
+		$window.location.href = '/edit_property/' + prop_id;
+	};
+
+	$scope.deleteProperty = function(prop_id) {
+		console.log('deleting prop: ' + prop_id);
+		$http.delete('/api/property/' + prop_id)
+			.success(function(data) {
+				$http.get('/api/getPropsByLandlord/' + landlord_id)
+					.success(function(data) {
+						console.log('success getting props: ' + JSON.stringify(data));
+						$scope.properties = data;
+					})
+					.error(function(err){	
+						console.log('error getting props by landlord');
+					});
+			})
+			.error(function(err){
+				console.log('got err: ' + err);
+			});
+	};
+
+}

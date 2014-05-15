@@ -70,8 +70,9 @@ module.exports = function(passport) {
                 newUser.local.fname     = req.body.fname;
                 newUser.local.lname     = req.body.lname;
                 newUser.local.phone     = req.body.phone;
-                newUser.local.city      = req.body.city;
-
+                //newUser.local.city      = req.body.city;
+                newUser.local.building  = req.body.building;
+                
 				// save the user
                 newUser.save(function(err) {
                     if (err)

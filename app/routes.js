@@ -25,18 +25,21 @@ module.exports = function(app, passport) {
 	// ========================================================================
 
 	app.get('/api/landlord/:landlord_id', prop_api.getLandlord);
+	app.get('/api/getPropJunctionsForLandlord/:landlord_id/:property_id', prop_api.getPropJunctionsForLandlord);
 
 	// ========================================================================
 	// PROPERTY METHODS
 	// ========================================================================
 
 	app.get('/api/propertyById/:property_id', prop_api.propertyById);
+	app.get('/api/getPropsByLandlord/:landlord_id', prop_api.getPropsByLandlord);
 	app.post('/api/property', isLoggedIn, prop_api.createProperty);
 	app.put('/api/updateProperty', isLoggedIn, prop_api.updateProperty);
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImageArr);
 	app.put('/api/updatePropImagesWithNewArr/:property_id', isLoggedIn, prop_api.newPropertyImageArr);
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
-	app.post('/api/uploadImages/:property_id', isLoggedIn, prop_api.uploadImage);
+	app.get('/api/neighborhoods', prop_api.getNeighborhoods);
+
 
 	// ========================================================================
 	// AMAZON S3 POLICY 
@@ -81,12 +84,8 @@ module.exports = function(app, passport) {
 	}));
 
 	app.get('/profile', isLoggedIn, function(req, res) {
-		Property.find({ 'landlord_id' : req.user._id}, function(err, properties) {
-			if(err) res.send(err);
-			res.render('profile.ejs', {
-				user 		: req.user,
-				myProps 	: properties
-			});
+		res.render('profile.ejs', {
+			user 		: req.user._id
 		});
 	});
 
