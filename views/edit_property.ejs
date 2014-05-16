@@ -52,9 +52,9 @@
 					    <input class="form-control" id="city" type="text" required ng-model="my_property.city" placeholder="e.g. Chicago" required/>
 					</div>
 					<div class="col-md-6 form-group">
-					    <label class="form-fonts" for="state">State</label>
-					    <input class="form-control" id="state" type="text" ng-model="my_property.state" required placeholder="e.g. IL" ng-minlength="2" ng-maxlength="2"/>
-					</div>
+                  		<label class="control-label">State</label>
+                  		<select class="form-control" ng-model="state_form.type" ng-options="option.abbreviation as option.abbreviation for option in state_options"></select>                  
+                	</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 form-group">

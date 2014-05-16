@@ -76,6 +76,7 @@ exports.updateProperty = function(req, res) {
   		name 			: req.body.name,
 		city			: req.body.city,
 		street			: req.body.street,
+		state			: req.body.state,
 		zip				: req.body.zip,
 		description		: req.body.description,
 		num_beds		: req.body.num_beds,

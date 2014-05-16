@@ -13,6 +13,7 @@ module.exports = mongoose.model('Property', {
 	price			: Number,
 	latitude		: String,
 	longitude		: String,
+	number_of_units	: Number,
 	neighborhood	: String,
 	imageURLs		: [String],
 	is_rented		: Boolean,

@@ -15,10 +15,6 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.imageUploads = [];
   var s3_asset_folder = 'shimmy-assets/'; 
 
-  /*if($location['$$host'] == 'localhost') {
-    s3_asset_folder = 'shimmy-assets/'; 
-  }*/
-
   $scope.bed_options = [
         { name: '0', value: '0' }, 
         { name: '1', value: '1' }, 
@@ -36,6 +32,61 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
         { name: '5', value: '5' }
     ];
 
+  $scope.state_options = [
+    { name: 'ALABAMA', abbreviation: 'AL'},
+    { name: 'ALASKA', abbreviation: 'AK'},
+    { name: 'ARIZONA', abbreviation: 'AZ'},
+    { name: 'ARKANSAS', abbreviation: 'AR'},
+    { name: 'CALIFORNIA', abbreviation: 'CA'},
+    { name: 'COLORADO', abbreviation: 'CO'},
+    { name: 'CONNECTICUT', abbreviation: 'CT'},
+    { name: 'DELAWARE', abbreviation: 'DE'},
+    { name: 'FLORIDA', abbreviation: 'FL'},
+    { name: 'GEORGIA', abbreviation: 'GA'},
+    { name: 'HAWAII', abbreviation: 'HI'},
+    { name: 'IDAHO', abbreviation: 'ID'},
+    { name: 'ILLINOIS', abbreviation: 'IL'},
+    { name: 'INDIANA', abbreviation: 'IN'},
+    { name: 'IOWA', abbreviation: 'IA'},
+    { name: 'KANSAS', abbreviation: 'KS'},
+    { name: 'KENTUCKY', abbreviation: 'KY'},
+    { name: 'LOUISIANA', abbreviation: 'LA'},
+    { name: 'MAINE', abbreviation: 'ME'},
+    { name: 'MARYLAND', abbreviation: 'MD'},
+    { name: 'MASSACHUSETTS', abbreviation: 'MA'},
+    { name: 'MICHIGAN', abbreviation: 'MI'},
+    { name: 'MINNESOTA', abbreviation: 'MN'},
+    { name: 'MISSISSIPPI', abbreviation: 'MS'},
+    { name: 'MISSOURI', abbreviation: 'MO'},
+    { name: 'MONTANA', abbreviation: 'MT'},
+    { name: 'NEBRASKA', abbreviation: 'NE'},
+    { name: 'NEVADA', abbreviation: 'NV'},
+    { name: 'NEW HAMPSHIRE', abbreviation: 'NH'},
+    { name: 'NEW JERSEY', abbreviation: 'NJ'},
+    { name: 'NEW MEXICO', abbreviation: 'NM'},
+    { name: 'NEW YORK', abbreviation: 'NY'},
+    { name: 'NORTH CAROLINA', abbreviation: 'NC'},
+    { name: 'NORTH DAKOTA', abbreviation: 'ND'},
+    { name: 'OHIO', abbreviation: 'OH'},
+    { name: 'OKLAHOMA', abbreviation: 'OK'},
+    { name: 'OREGON', abbreviation: 'OR'},
+    { name: 'PENNSYLVANIA', abbreviation: 'PA'},
+    { name: 'RHODE ISLAND', abbreviation: 'RI'},
+    { name: 'SOUTH CAROLINA', abbreviation: 'SC'},
+    { name: 'SOUTH DAKOTA', abbreviation: 'SD'},
+    { name: 'TENNESSEE', abbreviation: 'TN'},
+    { name: 'TEXAS', abbreviation: 'TX'},
+    { name: 'UTAH', abbreviation: 'UT'},
+    { name: 'VERMONT', abbreviation: 'VT'},
+    { name: 'VIRGINIA', abbreviation: 'VA'},
+    { name: 'WASHINGTON', abbreviation: 'WA'},
+    { name: 'WEST VIRGINIA', abbreviation: 'WV'},
+    { name: 'WISCONSIN', abbreviation: 'WI'},
+    { name: 'WYOMING', abbreviation: 'WY' }
+];
+
+  $scope.state_form = {type : $scope.state_options[12].abbreviation};
+  console.log('state option: ' + JSON.stringify($scope.state_options[12].abbreviation));
   $scope.bed_form = {type : $scope.bed_options[0].value};
   $scope.bath_form = {type : $scope.bath_options[0].value};
 
@@ -49,7 +100,9 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.createProperty = function() {
     $scope.new_property.numBaths = $scope.bath_form.type;
     $scope.new_property.numBeds = $scope.bed_form.type;
+    $scope.new_property.state = $scope.state_form.type;
 		$scope.new_property['user'] = $scope.userId;
+
 		$http.post('/api/property', $scope.new_property)
 			.success(function(data){
 				$scope.propertyId = data['_id'];
@@ -61,10 +114,11 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 
 	$scope.saveState = function() {
 	    var deferred = $q.defer();
+
 	    
 	    $timeout(function() {
 	      deferred.resolve();
-	    }, 2000);
+	    }, 1500);
 	    
 	    return deferred.promise;
   	};

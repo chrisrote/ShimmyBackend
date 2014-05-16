@@ -36,9 +36,63 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
         { name: '5', value: '5' }
     ];
 
+    $scope.state_options = [
+        { name: 'ALABAMA', abbreviation: 'AL'},
+        { name: 'ALASKA', abbreviation: 'AK'},
+        { name: 'ARIZONA', abbreviation: 'AZ'},
+        { name: 'ARKANSAS', abbreviation: 'AR'},
+        { name: 'CALIFORNIA', abbreviation: 'CA'},
+        { name: 'COLORADO', abbreviation: 'CO'},
+        { name: 'CONNECTICUT', abbreviation: 'CT'},
+        { name: 'DELAWARE', abbreviation: 'DE'},
+        { name: 'FLORIDA', abbreviation: 'FL'},
+        { name: 'GEORGIA', abbreviation: 'GA'},
+        { name: 'HAWAII', abbreviation: 'HI'},
+        { name: 'IDAHO', abbreviation: 'ID'},
+        { name: 'ILLINOIS', abbreviation: 'IL'},
+        { name: 'INDIANA', abbreviation: 'IN'},
+        { name: 'IOWA', abbreviation: 'IA'},
+        { name: 'KANSAS', abbreviation: 'KS'},
+        { name: 'KENTUCKY', abbreviation: 'KY'},
+        { name: 'LOUISIANA', abbreviation: 'LA'},
+        { name: 'MAINE', abbreviation: 'ME'},
+        { name: 'MARYLAND', abbreviation: 'MD'},
+        { name: 'MASSACHUSETTS', abbreviation: 'MA'},
+        { name: 'MICHIGAN', abbreviation: 'MI'},
+        { name: 'MINNESOTA', abbreviation: 'MN'},
+        { name: 'MISSISSIPPI', abbreviation: 'MS'},
+        { name: 'MISSOURI', abbreviation: 'MO'},
+        { name: 'MONTANA', abbreviation: 'MT'},
+        { name: 'NEBRASKA', abbreviation: 'NE'},
+        { name: 'NEVADA', abbreviation: 'NV'},
+        { name: 'NEW HAMPSHIRE', abbreviation: 'NH'},
+        { name: 'NEW JERSEY', abbreviation: 'NJ'},
+        { name: 'NEW MEXICO', abbreviation: 'NM'},
+        { name: 'NEW YORK', abbreviation: 'NY'},
+        { name: 'NORTH CAROLINA', abbreviation: 'NC'},
+        { name: 'NORTH DAKOTA', abbreviation: 'ND'},
+        { name: 'OHIO', abbreviation: 'OH'},
+        { name: 'OKLAHOMA', abbreviation: 'OK'},
+        { name: 'OREGON', abbreviation: 'OR'},
+        { name: 'PENNSYLVANIA', abbreviation: 'PA'},
+        { name: 'RHODE ISLAND', abbreviation: 'RI'},
+        { name: 'SOUTH CAROLINA', abbreviation: 'SC'},
+        { name: 'SOUTH DAKOTA', abbreviation: 'SD'},
+        { name: 'TENNESSEE', abbreviation: 'TN'},
+        { name: 'TEXAS', abbreviation: 'TX'},
+        { name: 'UTAH', abbreviation: 'UT'},
+        { name: 'VERMONT', abbreviation: 'VT'},
+        { name: 'VIRGINIA', abbreviation: 'VA'},
+        { name: 'WASHINGTON', abbreviation: 'WA'},
+        { name: 'WEST VIRGINIA', abbreviation: 'WV'},
+        { name: 'WISCONSIN', abbreviation: 'WI'},
+        { name: 'WYOMING', abbreviation: 'WY' }
+    ];
+
     $scope.tf_form = {type : $scope.tf_options[0].value};
     $scope.bed_form = {type : $scope.bed_options[0].value};
     $scope.bath_form = {type : $scope.bath_options[0].value};
+    $scope.state_form = {type : $scope.state_options[0].abbreviation};
 
 	$http.get('/api/propertyById/' + $scope.prop_id)
 		.success(function(properties) {
@@ -46,8 +100,18 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
             if($scope.my_property.is_rented) {
                 $scope.tf_form = {type : $scope.tf_options[1].value};
             }
-            $scope.bath_form = {type : $scope.bath_options[$scope.my_property.num_baths - 1].value};
-            $scope.bed_form = {type : $scope.bed_options[$scope.my_property.num_beds].value};
+
+            var myIndex = 0;
+            console.log('state: ' + $scope.my_property.state);
+            for(var i = 0; i < $scope.state_options.length; i++) {
+                if($scope.state_options[i].abbreviation == $scope.my_property.state) {
+                    console.log('found: ' + i);
+                    myIndex = i;
+                }
+            }
+            $scope.bath_form    = {type : $scope.bath_options[$scope.my_property.num_baths - 1].value};
+            $scope.bed_form     = {type : $scope.bed_options[$scope.my_property.num_beds].value};
+            $scope.state_form   = {type : $scope.state_options[myIndex].abbreviation};
 		})
 		.error(function(err) {
 			alert('We got an error: ' + err);
@@ -57,6 +121,8 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
         $scope.my_property.is_rented = $scope.tf_form.type;
         $scope.my_property.num_beds = $scope.bed_form.type;
         $scope.my_property.num_baths = $scope.bath_form.type;
+        $scope.my_property.state = $scope.state_form.type;
+        console.log('updating property: ' + JSON.stringify($scope.my_property));
 
 		$http.put('/api/updateProperty', $scope.my_property)
 			.success(function(property) {
