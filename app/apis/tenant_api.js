@@ -100,5 +100,11 @@ exports.getAllProps = function(req, res) {
 		if(err) res.send(err);
 		res.send(properties);
 	});
+};
 
+exports.resetPropertyJunctions = function(req, res) {
+	var tenant = req.params.tenant_id;
+	PropertyJunction.find({ tenant_id : tenant }).remove( function(err, junction) {
+		console.log('deleting junction: ' + JSON.stringify(junction));
+	});
 };

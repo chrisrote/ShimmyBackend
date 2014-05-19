@@ -48,6 +48,17 @@
 
 				<div class="row">
 					<div class="col-md-6 form-group">
+					    <label class="form-fonts" for="street">Street</label>
+					    <input class="form-control" id="street" type="text" required ng-model="my_property.street" required/>
+					</div>
+					<div class="col-md-6 form-group">
+		               	<label class="form-fonts control-label">Apt, Suite, Bldg. (optional)</label>
+		               	<input name="street2" class="form-control" type="text" placeholder="e.g. Apt #7" ng-model="my_property.street2" />
+		            </div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6 form-group">
 					    <label class="form-fonts" for="city">City</label>
 					    <input class="form-control" id="city" type="text" required ng-model="my_property.city" placeholder="e.g. Chicago" required/>
 					</div>
@@ -57,10 +68,7 @@
                 	</div>
 				</div>
 				<div class="row">
-					<div class="col-md-6 form-group">
-		               	<label class="form-fonts control-label">Apt, Suite, Bldg. (optional)</label>
-		               	<input name="suite" class="form-control" type="text" placeholder="e.g. Apt #7" ng-model="my_property.suite" />
-		            </div>
+					
 					<div class="col-md-6 form-group">
 					    <label class="form-fonts" for="zip">Zip</label>
 					    <input class="form-control" id="zip" type="text" ng-model="my_property.zip" ng-minlength="5" ng-maxlength="5" required/>

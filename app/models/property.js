@@ -7,6 +7,7 @@ module.exports = mongoose.model('Property', {
 	street			: String,
 	zip				: String,
 	state			: String,
+	street2			: String,
 	description		: String,
 	num_beds		: Number,
 	num_baths		: Number,

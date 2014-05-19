@@ -48,6 +48,7 @@ exports.createProperty = function(req, res) {
 				street		 	: req.body.street,
 				city			: req.body.city,
 				zip				: req.body.zip,
+				street2			: req.body.suite,
 				state 			: req.body.state,
 				description	 	: req.body.description,
 				num_beds		: req.body.numBeds,
