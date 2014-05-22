@@ -20,6 +20,7 @@ module.exports = function(app, passport) {
 	app.put('/api/editTenant', tenant_api.editTenant);
 	app.get('/api/allProps', tenant_api.getAllProps);
 	app.delete('/api/resetPropertyJunctions/:tenant_id', tenant_api.resetPropertyJunctions);
+	app.delete('/api/deleteUnusedJunctionsForTenants/:tenant_id', tenant_api.deleteUnusedJunctionsForTenants)
 
 	// ========================================================================
 	// LANDLORD METHODS

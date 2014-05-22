@@ -22,17 +22,18 @@ exports.getPropsForTenant = function(req, res) {
 	    		res.setHeader('Content-Type', 'application/json');
     			res.send(JSON.stringify({ 'properties' : 'none' }, null, 3));
 	    	} else {
-	    		console.log('####');
-
 		    	var propJunctions = [];
 
+		    	// set the swipe status to -1 to indicate
+		    	// user has not yet responded
 		    	properties.forEach(function(entry) {
 		    		var newJunc = { 
 		    			"email" 		: req.body.email,
 						"phone"			: req.body.phone,
 						"message"		: req.body.message,
 						"PropertyId"	: entry._id,
-						"tenant_id"    	: req.body.tenant_id
+						"tenant_id"    	: req.body.tenant_id,
+						"swipeStatus"	: -1
 					};
 					propJunctions.push(newJunc);
 		    	});
@@ -65,8 +66,7 @@ exports.setPropertyJunctions = function(req, res) {
 			if(entry.swipeStatus == 0) {
 				// send an email
 			}
-			res.setHeader('Content-Type', 'application/json');
-    		res.end(JSON.stringify({ updated : newPropJunctions.length }));
+    		res.send(JSON.stringify({ updated : newPropJunctions.length }));
 		});
 	});
 };
@@ -113,7 +113,18 @@ exports.getAllProps = function(req, res) {
 
 exports.resetPropertyJunctions = function(req, res) {
 	PropertyJunction.find({ tenant_id : req.params.tenant_id }).remove( function(err, junction) {
-		res.setHeader('Content-Type', 'application/json');
+		if(err) {
+			res.send(JSON.stringify({ 'error' : err }, null, 3));
+		}
+    	res.send(JSON.stringify({ 'deleteNumber' : junction.length }, null, 3));
+	});
+};
+
+exports.deleteUnusedJunctionsForTenants = function(req, res) {
+	PropertyJunction.find({ 
+		tenant_id 	: req.params.tenant_id,
+		swipeStatus : -1
+	}).remove( function(err, junction) {
 		if(err) {
 			res.send(JSON.stringify({ 'error' : err }, null, 3));
 		}
