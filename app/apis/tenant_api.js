@@ -114,6 +114,9 @@ exports.getAllProps = function(req, res) {
 exports.resetPropertyJunctions = function(req, res) {
 	PropertyJunction.find({ tenant_id : req.params.tenant_id }).remove( function(err, junction) {
 		res.setHeader('Content-Type', 'application/json');
+		if(err) {
+			res.send(JSON.stringify({ 'error' : err }, null, 3));
+		}
     	res.send(JSON.stringify({ 'deleteNumber' : junction.length }, null, 3));
 	});
 };
