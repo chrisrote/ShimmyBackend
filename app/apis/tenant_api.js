@@ -7,7 +7,6 @@ var Tenant				= require('../models/tenant');
 // Called when hitting route
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
-	console.log('tenant id: ' + req.body.tenant_id);
 	PropertyJunction.find({ tenant_id: req.body.tenant_id }, function(err, junctions) {
 	    if(err) res.send(err);
 	    
@@ -18,48 +17,56 @@ exports.getPropsForTenant = function(req, res) {
          
 	    Property.find(req.body.searchOpts).nin('_id', prop_ids).exec(function(err, properties) {
 	    	if(err) res.send(err);
+	    	if(properties.length === 0) {
+	    		console.log('didnt find props');
+	    		res.setHeader('Content-Type', 'application/json');
+    			res.send(JSON.stringify({ 'properties' : 'none' }, null, 3));
+	    	} else {
+	    		console.log('####');
 
-	    	var propJunctions = [];
+		    	var propJunctions = [];
 
-	    	properties.forEach(function(entry) {
-	    		var newJunc = { 
-	    			"email" 		: req.body.email,
-					"phone"			: req.body.phone,
-					"message"		: req.body.message,
-					"PropertyId"	: entry._id,
-					"tenant_id"    	: req.body.tenant_id
-				};
-				propJunctions.push(newJunc);
-	    	});
+		    	properties.forEach(function(entry) {
+		    		var newJunc = { 
+		    			"email" 		: req.body.email,
+						"phone"			: req.body.phone,
+						"message"		: req.body.message,
+						"PropertyId"	: entry._id,
+						"tenant_id"    	: req.body.tenant_id
+					};
+					propJunctions.push(newJunc);
+		    	});
 
-	    	PropertyJunction.create(propJunctions, function(err) {
-	    		if(err) res.send(err);
-	    		var insertedJunctions = [];
-				for (var i = 1; i < arguments.length; ++i) {
-				    insertedJunctions.push(arguments[i]);
-				}
-	    		var finalRes = {
-					"properties" : properties,
-					"junctions"	 : insertedJunctions
-				};
-				res.send(finalRes);
-	    	});
+		    	PropertyJunction.create(propJunctions, function(err) {
+		    		if(err) res.send(err);
+		    		var insertedJunctions = [];
+					for (var i = 1; i < arguments.length; ++i) {
+					    insertedJunctions.push(arguments[i]);
+					}
+		    		var finalRes = {
+						"properties" : properties,
+						"junctions"	 : insertedJunctions
+					};
+					res.send(finalRes);
+		    	});
+	    	}
 	    }); 
 	});
 };
 
 // Called when hitting route
 // /api/createPropJunctions
-exports.createPropJunctions = function(req, res) {
+exports.setPropertyJunctions = function(req, res) {
 	var newPropJunctions = req.body.property_junctions;
 	console.log('got new property_junctions: ' + JSON.stringify(newPropJunctions));
 	newPropJunctions.forEach(function(entry) {
 		PropertyJunction.update({ _id : entry._id }, { swipeStatus : entry.swipeStatus}, function(err, affected) {
 
 			if(entry.swipeStatus == 0) {
-				
+				// send an email
 			}
-			res.send('{updated :' + newPropJunctions.length + '}');
+			res.setHeader('Content-Type', 'application/json');
+    		res.end(JSON.stringify({ updated : newPropJunctions.length }));
 		});
 	});
 };
@@ -73,7 +80,9 @@ exports.createNewTenant = function(req, res) {
 		phone  			: newTenant.phone,
 		searchOpts 		: newTenant.searchOpts,
 		contactMessage	: newTenant.message,
-    	roomates		: newTenant.roommates
+    	roomates		: newTenant.roommates,
+    	fb_id			: newTenant.fb_id,
+    	fb_token		: newTenant.fb_token
 	}, function(err, aTenant){
 		if(err) res.send('failed to create tenant');
 		res.send(aTenant);
@@ -103,8 +112,8 @@ exports.getAllProps = function(req, res) {
 };
 
 exports.resetPropertyJunctions = function(req, res) {
-	var tenant = req.params.tenant_id;
-	PropertyJunction.find({ tenant_id : tenant }).remove( function(err, junction) {
-		console.log('deleting junction: ' + JSON.stringify(junction));
+	PropertyJunction.find({ tenant_id : req.params.tenant_id }).remove( function(err, junction) {
+		res.setHeader('Content-Type', 'application/json');
+    	res.send(JSON.stringify({ 'deleteNumber' : junction.length }, null, 3));
 	});
 };
