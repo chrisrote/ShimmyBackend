@@ -7,15 +7,25 @@ var Tenant				= require('../models/tenant');
 // Called when hitting route
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
+	console.log('got a req: ' + JSON.stringify(req.body));
 	PropertyJunction.find({ tenant_id: req.body.tenant_id }, function(err, junctions) {
 	    if(err) res.send(err);
+
+	    var theOpts = req.body.searchOpts;
 	    
+	    var searchParams = {
+	    	price : { $gte: Number(theOpts.priceLow), $lte: Number(theOpts.priceHigh) },
+	    	num_beds : { $gte: Number(theOpts.bedsMin), $lte: Number(theOpts.bedsMax) },
+	    	num_baths : { $gte: Number(theOpts.bathsMin), $lte: Number(theOpts.bathsMax) }
+	    };
+
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
 	        prop_ids.push(junc.PropertyId); 
 	    });
          
-	    Property.find(req.body.searchOpts).nin('_id', prop_ids).exec(function(err, properties) {
+        console.log('search params: ' + JSON.stringify(searchParams));
+	    Property.find(searchParams).nin('_id', prop_ids).exec(function(err, properties) {
 	    	if(err) res.send(err);
 	    	if(properties.length === 0) {
 	    		console.log('didnt find props');
@@ -104,8 +114,14 @@ exports.editTenant = function(req, res) {
 };
 
 
-exports.getAllProps = function(req, res) {
-	Property.find({}, function(err, properties) {
+exports.getAllProps = function(req, res) {	    
+	var searchParams = {
+	   	price : { $gte: 200, $lte:1500 },
+	   	num_beds : { $gte: 3, $lte: 10 },
+	  	num_baths : { $gte: 0, $lte: 10 }
+	};
+
+	Property.find(searchParams, function(err, properties) {
 		if(err) res.send(err);
 		res.send(properties);
 	});
@@ -120,7 +136,8 @@ exports.resetPropertyJunctions = function(req, res) {
 	});
 };
 
-exports.deleteUnusedJunctionsForTenants = function(req, res) {
+exports.deleteUnusedJunctionsForTenant = function(req, res) {
+	console.log('deleting unused prop junctions');
 	PropertyJunction.find({ 
 		tenant_id 	: req.params.tenant_id,
 		swipeStatus : -1
@@ -128,6 +145,9 @@ exports.deleteUnusedJunctionsForTenants = function(req, res) {
 		if(err) {
 			res.send(JSON.stringify({ 'error' : err }, null, 3));
 		}
-    	res.send(JSON.stringify({ 'deleteNumber' : junction.length }, null, 3));
+		var res_body = {
+    		deleted : junction,	
+    	};
+    	res.send(res_body);
 	});
 };
