@@ -1,11 +1,11 @@
 'use strict'
 
 var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
-  .run(function ($rootScope, $location, $http) {
+    .run(function ($rootScope, $location, $http) {
 
-    $http.get('/api/config').success(function(config) {
-        $rootScope.config = config;
-      });
+        $http.get('/api/config').success(function(config) {
+            $rootScope.config = config;
+        });
   });
 
 function mainController($scope, $http, $location, $window, $q, $timeout, $upload, $rootScope) {
@@ -13,9 +13,9 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
 	$scope.userId = window.myUser;
 	$scope.propertyId;
 	$scope.imageUploads = [];
-  var s3_asset_folder = 'shimmy-assets/'; 
+    var s3_asset_folder = 'shimmy-assets/'; 
 
-  $scope.bed_options = [
+    $scope.bed_options = [
         { name: '0', value: '0' }, 
         { name: '1', value: '1' }, 
         { name: '2', value: '2' },
@@ -24,7 +24,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
         { name: '5', value: '5' }
     ];
 
-  $scope.bath_options = [
+    $scope.bath_options = [
         { name: '1', value: '1' }, 
         { name: '2', value: '2' },
         { name: '3', value: '3' }, 
@@ -32,7 +32,7 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
         { name: '5', value: '5' }
     ];
 
-  $scope.state_options = [
+    $scope.state_options = [
     { name: 'ALABAMA', abbreviation: 'AL'},
     { name: 'ALASKA', abbreviation: 'AK'},
     { name: 'ARIZONA', abbreviation: 'AZ'},
@@ -83,12 +83,11 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
     { name: 'WEST VIRGINIA', abbreviation: 'WV'},
     { name: 'WISCONSIN', abbreviation: 'WI'},
     { name: 'WYOMING', abbreviation: 'WY' }
-];
+    ];
 
-  $scope.state_form = {type : $scope.state_options[12].abbreviation};
-  console.log('state option: ' + JSON.stringify($scope.state_options[12].abbreviation));
-  $scope.bed_form = {type : $scope.bed_options[0].value};
-  $scope.bath_form = {type : $scope.bath_options[0].value};
+    $scope.state_form = {type : $scope.state_options[12].abbreviation};
+    $scope.bed_form = {type : $scope.bed_options[0].value};
+    $scope.bath_form = {type : $scope.bath_options[0].value};
 
 
     $scope.abort = function(index) {
@@ -136,49 +135,103 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
   			})
   	};
 
+    function getBlobFromURL(dataURL) {
+        var BASE64_MARKER = ';base64,';
+        if (dataURL.indexOf(BASE64_MARKER) == -1) {
+            var parts = dataURL.split(',');
+            var contentType = parts[0].split(':')[1];
+            var raw = parts[1];
+
+            return new Blob([raw], {type: contentType});
+        }
+
+        var parts = dataURL.split(BASE64_MARKER);
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([uInt8Array], {type: contentType});
+    }
+
+
+    function sendToS3(data, i, img_name, img_type) {
+        var img = getBlobFromURL(data)
+        img.progress = parseInt(0);
+        $scope.comp_images.push(img);
+
+        $http.get('/api/s3Policy?mimeType='+ img_type).success(function(response) {
+            var s3Params = response;
+            $scope.upload[i] = $upload.upload({
+                url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
+                method: 'POST',
+                data: {
+                    'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + img_name,
+                    'acl' : 'public-read',
+                    'Content-Type' : img_type,
+                    'AWSAccessKeyId': s3Params.AWSAccessKeyId,
+                    'success_action_status' : '201',
+                    'Policy' : s3Params.s3Policy,
+                    'Signature' : s3Params.s3Signature
+                },
+                file: img,
+            }).then(function(response) {
+                console.log('got response');
+                img.progress = parseInt(100);
+                if (response.status === 201) {
+                    var data = xml2json.parser(response.data),
+                    parsedData;
+                    parsedData = {
+                        location: data.postresponse.location,
+                        bucket: data.postresponse.bucket,
+                        key: data.postresponse.key,
+                        etag: data.postresponse.etag
+                    };
+                    $scope.imageUploads.push(parsedData);                                
+                } else {
+                    alert('Upload Failed');
+                }
+            }, null, function(evt) {
+                img.progress =  parseInt(100.0 * evt.loaded / evt.total);
+            });
+        });
+    }
+    
 	$scope.onFileSelect = function ($files) {
             $scope.files = $files;
             $scope.upload = [];
+            $scope.comp_images = [];
             for (var i = 0; i < $files.length; i++) {
-                var file = $files[i];
-                file.progress = parseInt(0);
-                (function (file, i) {
-                    $http.get('/api/s3Policy?mimeType='+ file.type).success(function(response) {
-                        var s3Params = response;
-                        //var fileToUpload = compress(file);
-                        $scope.upload[i] = $upload.upload({
-                            url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
-                            method: 'POST',
-                            data: {
-                                'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + file.name,
-                                'acl' : 'public-read',
-                                'Content-Type' : file.type,
-                                'AWSAccessKeyId': s3Params.AWSAccessKeyId,
-                                'success_action_status' : '201',
-                                'Policy' : s3Params.s3Policy,
-                                'Signature' : s3Params.s3Signature
-                            },
-                            file: file,
-                        }).then(function(response) {
-                            file.progress = parseInt(100);
-                            if (response.status === 201) {
-                                var data = xml2json.parser(response.data),
-                                parsedData;
-                                parsedData = {
-                                    location: data.postresponse.location,
-                                    bucket: data.postresponse.bucket,
-                                    key: data.postresponse.key,
-                                    etag: data.postresponse.etag
-                                };
-                                $scope.imageUploads.push(parsedData);                                
-                            } else {
-                                alert('Upload Failed');
-                            }
-                        }, null, function(evt) {
-                            file.progress =  parseInt(100.0 * evt.loaded / evt.total);
-                        });
-                    });
-                }(file, i));
+                var fr = new FileReader();
+                var myName = $files[i].name;
+                var myType = $files[i].type;
+                fr.onload = function (e) {
+                    var img = new Image();
+                    var fileSent = false;
+                    img.onload = function(){
+                        var MAXWidthHeight = 488;
+                        var ratio = MAXWidthHeight / Math.max(this.width,this.height);
+                        var w = Math.round(this.width * ratio);
+                        var h = Math.round(this.height * ratio);
+                        var c = document.createElement("canvas");
+                        c.width = w;
+                        c.height = h;
+                        c.getContext("2d").drawImage(this,0,0,w,h);
+                        this.src = c.toDataURL();
+                        if(!fileSent) {
+                            sendToS3(c.toDataURL(), i, myName, myType);
+                            fileSent = true;
+                        }
+                        document.body.appendChild(this);
+                    }
+                    img.src = e.target.result;
+                } 
+                fr.readAsDataURL($files[i]);
             }
         };
 }

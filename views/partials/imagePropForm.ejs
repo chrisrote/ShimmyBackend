@@ -4,7 +4,7 @@
                     <label for="photos">Input Pictures</label>
                     <input id="photos" type="file" class="btn" ng-file-select="onFileSelect($files)" multiple>
                     <p class="help-block">Select pictures</p>
-                    <div ng-repeat="file in files" class="container">
+                    <div ng-repeat="file in comp_images" class="container">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
                                 {{file.name}} : {{file.progress}}

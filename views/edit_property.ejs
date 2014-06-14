@@ -102,13 +102,13 @@
 		            <p class="help-block">Select pictures</p>
 
 		            <div ng-repeat="file in files" class="container">
-		                <div class="progress">
-		                    <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
-		                        {{file.name}} : {{file.progress}}
-		                    </div>
-		                </div>
-		                <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
-		            </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
+                                {{file.name}} : {{file.progress}}
+                            </div>
+                        </div>
+                        <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>
+                    </div>
 		        </div>
 
 		        <div id="gal-images" class="col-md-12 col-sm-4 col-xs-6" style="padding-bottom:.5cm;">

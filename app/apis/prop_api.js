@@ -2,30 +2,61 @@ var Property 			= require('../models/property');
 var PropertyJunction 	= require('../models/property_junction');
 var Landlord 			= require('../models/landlord');
 var Neighborhood 		= require('../models/neighborhood');
-var https 				= require('https');
-var http 				= require('http');
+var https 				= require('https');  
+var http 				= require('http'); 
 var AWS = require('aws-sdk'),
     crypto = require('crypto');
-
-var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+var neighborhoods 		= require('./neighborhoods');
+var inside = require('point-in-polygon');
+ 
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY; 
 var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 var S3_BUCKET = process.env.S3_BUCKET;
 
 // ===================================================
 // CREATE NEW PROPERTY FROM UI
 exports.createProperty = function(req, res) {
-	// Callout to Google Geocoding API
+	Property.create({
+				name 			: req.body.name,
+				price			: req.body.price,
+				street		 	: req.body.street,
+				city			: req.body.city,
+				zip				: req.body.zip,
+				street2			: req.body.suite,
+				state 			: req.body.state,
+				description	 	: req.body.description,
+				num_beds		: req.body.numBeds,
+				num_baths	   	: req.body.numBaths,
+				is_rented		: false,
+				landlord_id		: req.body.user
+	}, function(err, property) {
+		if(err) {
+			console.log('error creating a prop');
+			res.send(err);
+		}
+		var info = {
+			street 	: property.street,
+			city 	: property.city,
+			state 	: property.state
+		};
+		res.json(200, property);
+		findLatLong(info, property._id);
+	});
+};
+
+function findLatLong(info, prop_id) {
+	console.log('finding the lat long');
 	var geocode_API_key = 'AIzaSyCa5lOnYd8klc02w9Up2mETb-uPwou-adg';
-	var addr = req.body.street.split(' ').join('+');
-	var city = req.body.city.split(' ').join('+');
-	var state = req.body.state.split(' ').join('+');
+	var addr = info.street.split(' ').join('+');
+	var city = info.city.split(' ').join('+');
+	var state = info.state.split(' ').join('+');
 	var full_addr = addr + ',+' + city + ',+' + state;
 	var my_result = '';
 	var geocode_path = '/maps/api/geocode/json?address=' + full_addr + '&sensor=false&key=' + geocode_API_key;
 	var latitude, longitude;
 
 	var options = {
-  		hostname: 'maps.googleapis.com',
+  		hostname: 'maps.googleapis.com', 
   		port: 443,
   		path: geocode_path,
   		method: 'GET'
@@ -39,28 +70,23 @@ exports.createProperty = function(req, res) {
 
 		google_res.on('end', function() {
 			var parsedJSON = JSON.parse(my_result);
-			console.log('parsed json: ' + JSON.stringify(parsedJSON));
-			latitude = parsedJSON.results[0].geometry.location.lat || 0;
-			longitude = parsedJSON.results[0].geometry.location.lng || 0;
-			Property.create({
-				name 			: req.body.name,
-				price			: req.body.price,
-				street		 	: req.body.street,
-				city			: req.body.city,
-				zip				: req.body.zip,
-				street2			: req.body.suite,
-				state 			: req.body.state,
-				description	 	: req.body.description,
-				num_beds		: req.body.numBeds,
-				num_baths	   	: req.body.numBaths,
-				is_rented		: false,
-				latitude	    : latitude,
-				longitude	 	: longitude,
-				landlord_id		: req.body.user
-			}, function(err, property) {
-				if(err) res.send(err);
+			var myNeighborhood = 'all';
+			myLat = parsedJSON.results[0].geometry.location.lat || 0;
+			myLong = parsedJSON.results[0].geometry.location.lng || 0;
+			if(myLat != 0 && myLong != 0) {
+				myNeighborhood = findNeighborhood(myLat, myLong);
+			}
 
-				res.send(property);
+			Property.findOneAndUpdate({
+				"_id" : prop_id,
+			}, {
+				latitude   		: myLat,
+				longitude 		: myLong,
+				neighborhood 	: myNeighborhood
+			}, function(err, prop) {
+				if(err) {
+					console.log('got error: ' + JSON.stringify(err));
+				}
 			});
 		});
 	});
@@ -69,7 +95,19 @@ exports.createProperty = function(req, res) {
   		res.send(e);
 	});
 	google_req.end();
-};
+}
+
+
+function findNeighborhood(latitude, longitude) {
+	var point = [latitude, longitude];
+	var myNArr = neighborhoods.hoods;
+	for (var i = 0; i < myNArr.length; i++) {
+		if(inside(point, myNArr[i].coordinates)) {
+			return myNArr[i].name;
+		}
+	}
+	return 'all';
+}
 
 
 exports.updateProperty = function(req, res) {

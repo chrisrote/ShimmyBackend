@@ -13,6 +13,8 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
 	$scope.showDetails = true;
     $scope.selected_images = [];
     $scope.isRentVals = {};
+    $scope.imageUploads = [];
+    var s3_asset_folder = 'shimmy-assets/'; 
 
     $scope.tf_options = [
         { name: 'False', value: 'false' }, 
@@ -176,26 +178,29 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
 		$window.location.href = '/profile';	
 	};
 
+    function getBlobFromURL(dataURL) {
+        var BASE64_MARKER = ';base64,';
+        if (dataURL.indexOf(BASE64_MARKER) == -1) {
+            var parts = dataURL.split(',');
+            var contentType = parts[0].split(':')[1];
+            var raw = parts[1];
 
-    var compress = function(source_img_obj, quality, output_format){
-             
-        var mime_type = "image/jpeg";
-        if(output_format != undefined && output_format == "png"){
-            mime_type = "image/png";
+            return new Blob([raw], {type: contentType});
         }
-        var cvs = document.createElement('canvas');
-        //console.log('cvs: ' + JSON.stringify(cvs));
-        //console.log('source width: ' + source_img_obj.naturalWidth);
-        //console.log('source height: ' + source_img_obj.naturalHeight);
-        var ratio = 250 / source_img_obj.naturalHeight;
-        cvs.width = ratio * source_img_obj.naturalWidth;
-        cvs.height = 250;
-        var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0);
-        var newImageData = cvs.toDataURL(mime_type, ratio/100);
-        var result_image_obj = new Image();
-        result_image_obj.src = newImageData;
-        return result_image_obj;
-    };
+
+        var parts = dataURL.split(BASE64_MARKER);
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([uInt8Array], {type: contentType});
+    }
 
     $scope.onFileSelect = function($files) {
         $scope.files = $files;
@@ -252,5 +257,6 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
                 }(file, i));
             }
         };
+
 
 }

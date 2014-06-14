@@ -3,11 +3,13 @@
 var Property 			= require('../models/property');
 var PropertyJunction 	= require('../models/property_junction');
 var Tenant				= require('../models/tenant');
+var Landlord			= require('../models/landlord');
+var nodemailer			= require("nodemailer");
+
 
 // Called when hitting route
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
-	console.log('got a req: ' + JSON.stringify(req.body));
 	PropertyJunction.find({ tenant_id: req.body.tenant_id }, function(err, junctions) {
 	    if(err) res.send(err);
 
@@ -24,11 +26,9 @@ exports.getPropsForTenant = function(req, res) {
 	        prop_ids.push(junc.PropertyId); 
 	    });
          
-        console.log('search params: ' + JSON.stringify(searchParams));
 	    Property.find(searchParams).nin('_id', prop_ids).exec(function(err, properties) {
 	    	if(err) res.send(err);
 	    	if(properties.length === 0) {
-	    		console.log('didnt find props');
 	    		res.setHeader('Content-Type', 'application/json');
     			res.send(JSON.stringify({ 'properties' : 'none' }, null, 3));
 	    	} else {
@@ -43,6 +43,7 @@ exports.getPropsForTenant = function(req, res) {
 						"message"		: req.body.message,
 						"PropertyId"	: entry._id,
 						"tenant_id"    	: req.body.tenant_id,
+						"LandlordId"	: entry.landlord_id,
 						"swipeStatus"	: -1
 					};
 					propJunctions.push(newJunc);
@@ -58,27 +59,64 @@ exports.getPropsForTenant = function(req, res) {
 						"properties" : properties,
 						"junctions"	 : insertedJunctions
 					};
-					res.send(finalRes);
+					res.json(200, finalRes);
 		    	});
 	    	}
 	    }); 
 	});
 };
 
+function sendEmailToLandlord(aJunc) {
+	Landlord.findOne({ _id : aJunc.LandlordId }, function (err, aLandlord) {
+		if(err) console.log('got an error finding the landlord: ' + err);
+		var smtpTransport = nodemailer.createTransport("SMTP",{
+			service: "Gmail",
+			auth: {
+			    user: "tyler@shimmy-properties.com",
+			    pass: "Ranlou1989"
+			}
+		});
+		if(!aLandlord) {
+			var mailOptions = {
+			    from: "Get Shimmy! <tyler@shimmy-properties.com>", 
+			    to: "tyler@shimmy-properties.com", 
+			    subject: "ERROR!", 
+			    text: "There was an error in associating a junction. id: " + aJunc._id,
+			    html: "There was an error in associating a junction. id: " + aJunc._id
+			}
+		} else {
+			var mailOptions = {
+			    from: "Get Shimmy! <tyler@shimmy-properties.com>", 
+			    to: aLandlord.local.email, 
+			    subject: "Shimmy-Properties: You have a new lead!", 
+			    text: "You have a new lead! Please login http://www.shimmy-properties.com/ to view. id: " + aJunc._id,
+			    html: '<b>You have a new lead!</b><p>Please login <a href=\"http://www.shimmy-properties.com/\">here</a> to view.</p><p>Thanks,<br/> The Shimmy Team</p> id: ' + aJunc._id
+			}
+		}
+		smtpTransport.sendMail(mailOptions, function(error, response){
+		   if(error){
+		        console.log(error);
+		    }else{
+		        console.log("Message sent: " + response.message);
+			}
+			smtpTransport.close();
+		})
+	});
+}
+
 // Called when hitting route
 // /api/createPropJunctions
 exports.setPropertyJunctions = function(req, res) {
 	var newPropJunctions = req.body.property_junctions;
-	console.log('got new property_junctions: ' + JSON.stringify(newPropJunctions));
-	newPropJunctions.forEach(function(entry) {
-		PropertyJunction.update({ _id : entry._id }, { swipeStatus : entry.swipeStatus}, function(err, affected) {
-
-			if(entry.swipeStatus == 0) {
-				// send an email
+	for (var i = 0; i < newPropJunctions.length; i++) {
+		var curJunction = newPropJunctions[i];
+		PropertyJunction.findOneAndUpdate({ _id : newPropJunctions[i]._id }, { swipeStatus : newPropJunctions[i].swipeStatus}, function(err, aJunc) {
+			if(aJunc.swipeStatus == 0) {
+				sendEmailToLandlord(aJunc);
 			}
-    		res.send(JSON.stringify({ updated : newPropJunctions.length }));
 		});
-	});
+	}
+	res.json(200, { updated : newPropJunctions.length });
 };
 
 // Called when hitting route
@@ -137,7 +175,6 @@ exports.resetPropertyJunctions = function(req, res) {
 };
 
 exports.deleteUnusedJunctionsForTenant = function(req, res) {
-	console.log('deleting unused prop junctions');
 	PropertyJunction.find({ 
 		tenant_id 	: req.params.tenant_id,
 		swipeStatus : -1
@@ -148,6 +185,6 @@ exports.deleteUnusedJunctionsForTenant = function(req, res) {
 		var res_body = {
     		deleted : junction,	
     	};
-    	res.send(res_body);
+    	res.json(200, res_body);
 	});
 };
