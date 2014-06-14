@@ -20,7 +20,7 @@ exports.getPropsForTenant = function(req, res) {
 	    	num_beds : { $gte: Number(theOpts.bedsMin), $lte: Number(theOpts.bedsMax) },
 	    	num_baths : { $gte: Number(theOpts.bathsMin), $lte: Number(theOpts.bathsMax) }
 	    };
-
+	    console.log('getting props');
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
 	        prop_ids.push(junc.PropertyId); 
@@ -59,6 +59,7 @@ exports.getPropsForTenant = function(req, res) {
 						"properties" : properties,
 						"junctions"	 : insertedJunctions
 					};
+					console.log('sending response');
 					res.json(200, finalRes);
 		    	});
 	    	}
@@ -108,13 +109,16 @@ function sendEmailToLandlord(aJunc) {
 // /api/createPropJunctions
 exports.setPropertyJunctions = function(req, res) {
 	var newPropJunctions = req.body.property_junctions;
-	for (var i = 0; i < newPropJunctions.length; i++) {
+	console.log('got prop junctions: ' + JSON.stringify(newPropJunctions));
+	for (var i = 0; i < newPropJunctions.length; i++) { 
 		var curJunction = newPropJunctions[i];
-		PropertyJunction.findOneAndUpdate({ _id : newPropJunctions[i]._id }, { swipeStatus : newPropJunctions[i].swipeStatus}, function(err, aJunc) {
-			if(aJunc.swipeStatus == 0) {
-				sendEmailToLandlord(aJunc);
-			}
-		});
+		if(newPropJunctions[i].hasOwnProperty('PropertyId')) {
+			PropertyJunction.findOneAndUpdate({ _id : newPropJunctions[i]._id }, { swipeStatus : newPropJunctions[i].swipeStatus}, function(err, aJunc) {
+				if(aJunc.swipeStatus == 0) {
+					sendEmailToLandlord(aJunc);
+				}
+			});
+		}
 	}
 	res.json(200, { updated : newPropJunctions.length });
 };

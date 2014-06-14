@@ -27,7 +27,7 @@ app.configure(function() {
 	app.use(passport.session()); // persistent login sessions
 	app.use(flash());
 
-	app.use(express.favicon(__dirname + '/views/img/favicon.ico')); 
+	app.use(express.favicon(__dirname + '../img/favicon.ico')); 
 
   	app.use(express.static(__dirname + '/views'));     	// set the static files location /public/img will be /img for users
   	app.use(express.methodOverride());                  // simulate DELETE and PUT

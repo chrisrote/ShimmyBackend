@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Shimmy - Create Property</title>
 
 
@@ -10,18 +10,23 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="stylesheet" href="/css/new_property.css">
 
+
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="form-lib/jquery.bootstrap.wizard.js"></script>
   <script src="/file-upload/angular-file-upload-shim.min.js"></script> 
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+  
+
   <script src="/file-upload/angular-file-upload.min.js"></script> 
   <script src="form-src/directives/rcSubmit.js"></script>
   <script src="form-src/modules/rcForm.js"></script>
   <script src="form-src/modules/rcDisabled.js"></script>
   <script src="form-src/modules/rcWizard.js"></script>
-  <script src="/xml2json.js"></script>
-
+  <script src="/js/xml2json.js"></script>
+  <script src="/js/sel_options.js"></script>
+  
+  <script src="/shimmyApp.js"></script>
   <script type="text/javascript" src="/new_property.js"></script>
   <script>myUser="<%=user._id%>";</script>
   <script src="js/bootstrap-formhelpers.min.js"></script>
@@ -30,14 +35,13 @@
 
 </head>
 
-  <body ng-app="shimmy">
+  <body ng-app="shimmy.controllers">
     <% include partials/navbar.ejs %>
     <br/><br/><br/>
     <div class="container" >
       <div class="row">
         <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-          <div ng-controller="mainController" 
-               rc-wizard="propertyWizard" rc-disabled="rc.firstForm.submitInProgress">
+          <div ng-controller="newPropertyController" rc-wizard="propertyWizard" rc-disabled="rc.firstForm.submitInProgress">
             <ul class="nav rc-nav-wizard">
               <li class="active">
                 <a class="active" href="#first" data-toggle="tab">

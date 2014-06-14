@@ -1,89 +1,21 @@
 'use strict'
 
-var shimmy 		= angular.module('shimmy', ['rcWizard', 'rcForm', 'rcDisabledBootstrap', 'angularFileUpload'])
-    .run(function ($rootScope, $location, $http) {
-
-        $http.get('/api/config').success(function(config) {
-            $rootScope.config = config;
-        });
-  });
-
-function mainController($scope, $http, $location, $window, $q, $timeout, $upload, $rootScope) {
+angular.module('shimmy.controllers')
+.controller('newPropertyController', ['$scope', '$http', '$location', '$window', '$q', '$timeout', '$upload', 
+function($scope, $http, $location, $window, $q, $timeout, $upload){
 	$scope.new_property = {};
 	$scope.userId = window.myUser;
 	$scope.propertyId;
 	$scope.imageUploads = [];
     var s3_asset_folder = 'shimmy-assets/'; 
 
-    $scope.bed_options = [
-        { name: '0', value: '0' }, 
-        { name: '1', value: '1' }, 
-        { name: '2', value: '2' },
-        { name: '3', value: '3' }, 
-        { name: '4', value: '4' },
-        { name: '5', value: '5' }
-    ];
+    $http.get('/api/config').success(function(config) {
+        $scope.my_config = config;
+    });
 
-    $scope.bath_options = [
-        { name: '1', value: '1' }, 
-        { name: '2', value: '2' },
-        { name: '3', value: '3' }, 
-        { name: '4', value: '4' },
-        { name: '5', value: '5' }
-    ];
-
-    $scope.state_options = [
-    { name: 'ALABAMA', abbreviation: 'AL'},
-    { name: 'ALASKA', abbreviation: 'AK'},
-    { name: 'ARIZONA', abbreviation: 'AZ'},
-    { name: 'ARKANSAS', abbreviation: 'AR'},
-    { name: 'CALIFORNIA', abbreviation: 'CA'},
-    { name: 'COLORADO', abbreviation: 'CO'},
-    { name: 'CONNECTICUT', abbreviation: 'CT'},
-    { name: 'DELAWARE', abbreviation: 'DE'},
-    { name: 'FLORIDA', abbreviation: 'FL'},
-    { name: 'GEORGIA', abbreviation: 'GA'},
-    { name: 'HAWAII', abbreviation: 'HI'},
-    { name: 'IDAHO', abbreviation: 'ID'},
-    { name: 'ILLINOIS', abbreviation: 'IL'},
-    { name: 'INDIANA', abbreviation: 'IN'},
-    { name: 'IOWA', abbreviation: 'IA'},
-    { name: 'KANSAS', abbreviation: 'KS'},
-    { name: 'KENTUCKY', abbreviation: 'KY'},
-    { name: 'LOUISIANA', abbreviation: 'LA'},
-    { name: 'MAINE', abbreviation: 'ME'},
-    { name: 'MARYLAND', abbreviation: 'MD'},
-    { name: 'MASSACHUSETTS', abbreviation: 'MA'},
-    { name: 'MICHIGAN', abbreviation: 'MI'},
-    { name: 'MINNESOTA', abbreviation: 'MN'},
-    { name: 'MISSISSIPPI', abbreviation: 'MS'},
-    { name: 'MISSOURI', abbreviation: 'MO'},
-    { name: 'MONTANA', abbreviation: 'MT'},
-    { name: 'NEBRASKA', abbreviation: 'NE'},
-    { name: 'NEVADA', abbreviation: 'NV'},
-    { name: 'NEW HAMPSHIRE', abbreviation: 'NH'},
-    { name: 'NEW JERSEY', abbreviation: 'NJ'},
-    { name: 'NEW MEXICO', abbreviation: 'NM'},
-    { name: 'NEW YORK', abbreviation: 'NY'},
-    { name: 'NORTH CAROLINA', abbreviation: 'NC'},
-    { name: 'NORTH DAKOTA', abbreviation: 'ND'},
-    { name: 'OHIO', abbreviation: 'OH'},
-    { name: 'OKLAHOMA', abbreviation: 'OK'},
-    { name: 'OREGON', abbreviation: 'OR'},
-    { name: 'PENNSYLVANIA', abbreviation: 'PA'},
-    { name: 'RHODE ISLAND', abbreviation: 'RI'},
-    { name: 'SOUTH CAROLINA', abbreviation: 'SC'},
-    { name: 'SOUTH DAKOTA', abbreviation: 'SD'},
-    { name: 'TENNESSEE', abbreviation: 'TN'},
-    { name: 'TEXAS', abbreviation: 'TX'},
-    { name: 'UTAH', abbreviation: 'UT'},
-    { name: 'VERMONT', abbreviation: 'VT'},
-    { name: 'VIRGINIA', abbreviation: 'VA'},
-    { name: 'WASHINGTON', abbreviation: 'WA'},
-    { name: 'WEST VIRGINIA', abbreviation: 'WV'},
-    { name: 'WISCONSIN', abbreviation: 'WI'},
-    { name: 'WYOMING', abbreviation: 'WY' }
-    ];
+    $scope.bed_options   = bed_opts;
+    $scope.bath_options  = bath_opts;
+    $scope.state_options = state_opts;
 
     $scope.state_form = {type : $scope.state_options[12].abbreviation};
     $scope.bed_form = {type : $scope.bed_options[0].value};
@@ -163,12 +95,13 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
     function sendToS3(data, i, img_name, img_type) {
         var img = getBlobFromURL(data)
         img.progress = parseInt(0);
+        img.name = img_name;
         $scope.comp_images.push(img);
 
         $http.get('/api/s3Policy?mimeType='+ img_type).success(function(response) {
             var s3Params = response;
             $scope.upload[i] = $upload.upload({
-                url: 'https://' + $rootScope.config.awsConfig.bucket + '.s3.amazonaws.com/',
+                url: 'https://' + $scope.my_config.awsConfig.bucket + '.s3.amazonaws.com/',
                 method: 'POST',
                 data: {
                     'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + img_name,
@@ -234,5 +167,5 @@ function mainController($scope, $http, $location, $window, $q, $timeout, $upload
                 fr.readAsDataURL($files[i]);
             }
         };
-}
+}]);
 

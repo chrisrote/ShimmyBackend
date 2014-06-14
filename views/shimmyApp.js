@@ -1,0 +1,1 @@
+angular.module('shimmy.controllers', ['angularFileUpload', 'rcWizard', 'rcForm', 'rcDisabledBootstrap']);

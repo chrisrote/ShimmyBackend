@@ -9,8 +9,11 @@
   	<script src="/file-upload/angular-file-upload-shim.min.js"></script> 
   	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
   	<script src="/file-upload/angular-file-upload.min.js"></script> 
+  	<script src="/js/sel_options.js"></script>
+  	<script src="/shimmyApp.js"></script>
+
   	<script type="text/javascript" src="/edit_property.js"></script>
-  	<script src="/xml2json.js"></script>
+  	<script src="/js/xml2json.js"></script>
   	<script>var myProp = "<%= property_id %>";</script>
 
 	<style>
@@ -22,7 +25,7 @@
 
 <div class="container">
 	<div ng-controller="editPropController">
-		<h3 class="form-fonts" ><span class="glyphicon glyphicon-pencil"></span>  Edit Property - {{ my_property.name }} </h3>
+		<h3 class="form-fonts"><span class="glyphicon glyphicon-pencil"></span>  Edit Property - {{ my_property.name }} </h3>
 		<button class="btn btn-warning btn-sm" ng-click="changeShowDetails()" ng-show="!showDetails">Edit Details</button>
 		<button class="btn btn-warning btn-sm" ng-click="changeShowImages()" ng-show="showDetails">Edit Images</button>
 

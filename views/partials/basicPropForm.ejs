@@ -17,9 +17,9 @@
                   <label class="form-fonts control-label">City</label>
                   <input name="city" class="form-control" type="text" placeholder="e.g. Chicago" required ng-model="new_property.city" />
                 </div>
-                <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.state)}" >
+                <div class="form-group">
                   <label class="control-label">State</label>
-                  <select class="form-control" ng-model="state_form.type" ng-options="option.abbreviation as option.abbreviation for option in state_options" required></select>                  
+                  <select class="form-control" ng-model="state_form.type" ng-options="option.abbreviation as option.abbreviation for option in state_options"></select>                  
                 </div>
                 <div class="form-group" ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.zip)}">
                   <label class="form-fonts control-label">ZIP Code</label>
