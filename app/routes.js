@@ -19,6 +19,8 @@ module.exports = function(app, passport) {
 	app.post('/api/createNewTenant', tenant_api.createNewTenant);
 	app.put('/api/editTenant', tenant_api.editTenant);
 	app.get('/api/allProps', tenant_api.getAllProps);
+	app.put('/api/changeTenantRoommates/:tenant_id', tenant_api.changeTenantRoommates);
+	app.get('/api/syncPropertiesForTenant/:tenant_id', tenant_api.syncPropertiesForTenant);
 	app.delete('/api/resetPropertyJunctions/:tenant_id', tenant_api.resetPropertyJunctions);
 	app.delete('/api/deleteUnusedJunctionsForTenant/:tenant_id', tenant_api.deleteUnusedJunctionsForTenant);
 

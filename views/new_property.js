@@ -7,6 +7,9 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
 	$scope.userId = window.myUser;
 	$scope.propertyId;
 	$scope.imageUploads = [];
+    $scope.comp_images = [];
+    $scope.files = [];
+
     var s3_asset_folder = 'shimmy-assets/'; 
 
     $http.get('/api/config').success(function(config) {
@@ -29,9 +32,9 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
 
 	// when submitting the add form, send the text to the node API
 	$scope.createProperty = function() {
-    $scope.new_property.numBaths = $scope.bath_form.type;
-    $scope.new_property.numBeds = $scope.bed_form.type;
-    $scope.new_property.state = $scope.state_form.type;
+        $scope.new_property.numBaths = $scope.bath_form.type;
+        $scope.new_property.numBeds = $scope.bed_form.type;
+        $scope.new_property.state = $scope.state_form.type;
 		$scope.new_property['user'] = $scope.userId;
 
 		$http.post('/api/property', $scope.new_property)
@@ -92,21 +95,20 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
     }
 
 
-    function sendToS3(data, i, img_name, img_type) {
+    function sendToS3(data, i) {
         var img = getBlobFromURL(data)
         img.progress = parseInt(0);
-        img.name = img_name;
         $scope.comp_images.push(img);
 
-        $http.get('/api/s3Policy?mimeType='+ img_type).success(function(response) {
+        $http.get('/api/s3Policy?mimeType='+ img.type).success(function(response) {
             var s3Params = response;
             $scope.upload[i] = $upload.upload({
                 url: 'https://' + $scope.my_config.awsConfig.bucket + '.s3.amazonaws.com/',
                 method: 'POST',
                 data: {
-                    'key' : s3_asset_folder + Math.round(Math.random()*10000) + '$$' + img_name,
+                    'key' : s3_asset_folder + Math.round(Math.random()*100000) + '$$',
                     'acl' : 'public-read',
-                    'Content-Type' : img_type,
+                    'Content-Type' : img.type,
                     'AWSAccessKeyId': s3Params.AWSAccessKeyId,
                     'success_action_status' : '201',
                     'Policy' : s3Params.s3Policy,
@@ -114,7 +116,6 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
                 },
                 file: img,
             }).then(function(response) {
-                console.log('got response');
                 img.progress = parseInt(100);
                 if (response.status === 201) {
                     var data = xml2json.parser(response.data),
@@ -136,36 +137,31 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
     }
     
 	$scope.onFileSelect = function ($files) {
-            $scope.files = $files;
-            $scope.upload = [];
-            $scope.comp_images = [];
-            for (var i = 0; i < $files.length; i++) {
-                var fr = new FileReader();
-                var myName = $files[i].name;
-                var myType = $files[i].type;
-                fr.onload = function (e) {
-                    var img = new Image();
-                    var fileSent = false;
-                    img.onload = function(){
-                        var MAXWidthHeight = 488;
-                        var ratio = MAXWidthHeight / Math.max(this.width,this.height);
-                        var w = Math.round(this.width * ratio);
-                        var h = Math.round(this.height * ratio);
-                        var c = document.createElement("canvas");
-                        c.width = w;
-                        c.height = h;
-                        c.getContext("2d").drawImage(this,0,0,w,h);
-                        this.src = c.toDataURL();
-                        if(!fileSent) {
-                            sendToS3(c.toDataURL(), i, myName, myType);
-                            fileSent = true;
-                        }
-                        document.body.appendChild(this);
+        $scope.files = $files;
+        $scope.upload = [];
+        for (var i = 0; i < $files.length; i++) {
+            var fr = new FileReader();
+            fr.onload = function (e) {
+                var img = new Image();
+                var fileSent = false;
+                img.onload = function(){
+                    var MAXWidthHeight = 488;
+                    var ratio = MAXWidthHeight / Math.max(this.width,this.height);
+                    var w = Math.round(this.width * ratio);
+                    var h = Math.round(this.height * ratio);
+                    var c = document.createElement("canvas");
+                    c.width = w;
+                    c.height = h;
+                    c.getContext("2d").drawImage(this,0,0,w,h);
+                    if(!fileSent) {
+                        sendToS3(c.toDataURL());
+                        fileSent = true;
                     }
-                    img.src = e.target.result;
-                } 
-                fr.readAsDataURL($files[i]);
-            }
-        };
+                }
+                img.src = e.target.result;
+            } 
+            fr.readAsDataURL($files[i]);
+        }
+    };
 }]);
 

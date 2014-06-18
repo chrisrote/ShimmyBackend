@@ -7,7 +7,7 @@
                     <div ng-repeat="file in comp_images" class="container">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width:{{file.progress}}%;">
-                                {{file.name}} : {{file.progress}}
+                                {{file.progress}} %
                             </div>
                         </div>
                         <button class="btn btn-ttc" type="button" ng-click="abort($index)" ng-show="file.progress != 100">Abort</button>

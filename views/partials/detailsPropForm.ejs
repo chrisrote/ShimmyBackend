@@ -10,7 +10,7 @@
                 </div>
                 <div class="form-group" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.price)}">
                   <label class="control-label">Price ($)</label>
-                  <input type="text" class="form-control bfh-number" data-min="100" name="price" required ng-model="new_property.price" >
+                  <input type="number" class="form-control" name="price" required ng-model="new_property.price" >
                 </div> 
                 <div class="form-group clearfix" ng-class="{'has-error': rc.secondForm.needsAttention(secondForm.description)}">
                   <label for="description">Description</label>

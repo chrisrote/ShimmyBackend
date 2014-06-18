@@ -20,7 +20,6 @@ exports.getPropsForTenant = function(req, res) {
 	    	num_beds : { $gte: Number(theOpts.bedsMin), $lte: Number(theOpts.bedsMax) },
 	    	num_baths : { $gte: Number(theOpts.bathsMin), $lte: Number(theOpts.bathsMax) }
 	    };
-	    console.log('getting props');
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
 	        prop_ids.push(junc.PropertyId); 
@@ -59,7 +58,6 @@ exports.getPropsForTenant = function(req, res) {
 						"properties" : properties,
 						"junctions"	 : insertedJunctions
 					};
-					console.log('sending response');
 					res.json(200, finalRes);
 		    	});
 	    	}
@@ -105,6 +103,22 @@ function sendEmailToLandlord(aJunc) {
 	});
 }
 
+function sendPushNotificationToRoommates(aJunc) {
+	console.log('sending push notification');
+	Tenant.findById(aJunc.tenant_id, function (err, aTenant) {
+	 	console.log('a tenant: ' + JSON.stringify(aTenant));
+	 	if(aTenant.roommates.length > 0) {
+	 		Tenant.find({ 'fb_id': { $in : aTenant.roommates }}, function(err, roommates) {
+	 			console.log('found roommates: ' + JSON.stringify(roommates));
+	 			roommates.forEach(function(entry) {
+	 				console.log('sending a push to entry: ' + JSON.stringify(entry));
+	 			});
+	 		});
+	 	}	
+	});
+}
+
+
 // Called when hitting route
 // /api/createPropJunctions
 exports.setPropertyJunctions = function(req, res) {
@@ -116,6 +130,10 @@ exports.setPropertyJunctions = function(req, res) {
 			PropertyJunction.findOneAndUpdate({ _id : newPropJunctions[i]._id }, { swipeStatus : newPropJunctions[i].swipeStatus}, function(err, aJunc) {
 				if(aJunc.swipeStatus == 0) {
 					sendEmailToLandlord(aJunc);
+				}
+				if(aJunc.swipeStatus == 0 || aJunc.swipeStatus == 1) {
+					console.log('got a swipe status of 0 or 1, sending notification to server');
+					sendPushNotificationToRoommates(aJunc);
 				}
 			});
 		}
@@ -192,3 +210,39 @@ exports.deleteUnusedJunctionsForTenant = function(req, res) {
     	res.json(200, res_body);
 	});
 };
+
+
+exports.changeTenantRoommates = function(req, res) {
+	Tenant.findByIdAndUpdate(req.params.tenant_id, {roommates : req.body.fb_ids}, function(err, aTenant) {
+		if(err) {
+			res.send(422, err);
+		}
+		if(!aTenant) res.json(404, 'not found');
+		res.json(200, aTenant);
+	});
+};
+
+exports.syncPropertiesForTenant = function(req, res) {
+	PropertyJunction.find({ 'tenant_id' : req.params.tenant_id, $or:[ {'swipeStatus':0}, {'swipeStatus':1}]}, function(err, junctions) {
+		if(err) res.send(422, err); 
+
+		var propIds = [];
+		for(var i = 0; i < junctions.length; i++) {
+			propIds.push(junctions[i].PropertyId);
+		}
+
+		Property.find({ '_id' : { $in : propIds }}, function(err, props) {
+			if(err) res.send(422, err);
+			var unrented_props = [];
+			for(var j = 0; j < props.length; j++) {
+				if(!props[j].is_rented) {
+					unrented_props.push(props[j]);
+				}
+			}
+			res.json(201, unrented_props);
+		});
+	});
+};
+
+
+

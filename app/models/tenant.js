@@ -8,7 +8,7 @@ var tenantSchema = mongoose.Schema({
     contactMessage	: String,
     fb_id			: String,
     fb_token		: String,
-    roomates		: [String]
+    roommates		: [String]
 });
 
 

@@ -1,19 +1,37 @@
+var profile = angular.module('profile.controllers', []);
 
-var selectProp = angular.module('selectProp', []);
 
-function selectPropController($scope, $http, $window) {
+profile.directive('propertyRow', function() {
+	console.log('loading directive');
+	return {
+      	restrict: 'AE',
+      	replace: true,
+      	transclude: false,
+      	templateUrl: 'directives/propRow.ejs',
+      	scope: {},
+      	link : function(scope, element, attrs) {
+      		element.bind('click', function() {
+      			console.log('clicked a property');
+      		});
+      	},
+      	controller: function($scope) {
+      		$.get('/api/getPropsByLandlord/' + my_user)
+				.success(function(data) {
+					$scope.$apply(function () {
+					    $scope.properties = data;
+					});
+				})
+				.error(function(err){	
+					console.log('error getting props by landlord');
+				});
+      	}
+  	};
+});
+
+
+profile.controller('profileController', ['$scope', '$http', '$window', '$rootScope', function($scope, $http, $window, $rootScope){
 	var landlord_id = my_user;
-	$scope.properties = [];
 	$scope.landlord_id = landlord_id
-
-	$http.get('/api/getPropsByLandlord/' + landlord_id)
-		.success(function(data) {
-			console.log('success getting props: ' + JSON.stringify(data));
-			$scope.properties = data;
-		})
-		.error(function(err){	
-			console.log('error getting props by landlord');
-		});
 
 	$scope.showProp = function(landlord_id, prop_id) {
 		$http.get('/api/getPropJunctionsForLandlord/' + landlord_id + '/' + prop_id)
@@ -26,12 +44,10 @@ function selectPropController($scope, $http, $window) {
 	};
 
 	$scope.editProperty = function(prop_id) {
-		console.log('editing prop with id: ' + prop_id);
 		$window.location.href = '/edit_property/' + prop_id;
 	};
 
 	$scope.deleteProperty = function(prop_id) {
-		console.log('deleting prop: ' + prop_id);
 		$http.delete('/api/property/' + prop_id)
 			.success(function(data) {
 				$http.get('/api/getPropsByLandlord/' + landlord_id)
@@ -47,5 +63,4 @@ function selectPropController($scope, $http, $window) {
 				console.log('got err: ' + err);
 			});
 	};
-
-}
+}]);

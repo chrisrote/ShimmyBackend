@@ -1,0 +1,22 @@
+<div class="table-responsive">
+  <table class="table" ng-controller="profileController">
+    <tbody>  
+      <tr ng-repeat="property in properties">
+        <td><img ng-src="{{property.imageURLs[0]}}" class="img-responsive" style="max-height: 70px;" alt="" title=""></td>
+        <td>{{property.name}}</td> 
+        <td>${{property.price}}</td>
+        <td ng-if="property.is_rented">Rented</td>
+        <td ng-if="!property.is_rented"><p style="color:#74AFAD;font-weight:bold;">Vacant</p></td>
+        <td> 
+          <button type="button" class="btn btn-default btn-sm" ng-click="editProperty(property._id)">
+            <span class="glyphicon glyphicon-edit"></span> Edit Property
+          </button>
+
+          <button type="button" class="btn btn-danger btn-sm" ng-click="deleteProperty(property._id)" >
+            <span class="glyphicon glyphicon-trash"></span> Delete Property
+          </button>
+        </td>
+      </tr>       
+    </tbody> 
+  </table>
+</div>

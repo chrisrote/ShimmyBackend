@@ -20,7 +20,8 @@
     "bcrypt-nodejs" : "latest",
     "angular-wizard": "latest",
     "point-in-polygon": "latest",
-    "nodemailer": "0.6.5"
+    "nodemailer": "0.6.5",
+    "passport-facebook" : "1.0.3"
   },
   "devDependencies": {
     "supertest": "0.5.x",
