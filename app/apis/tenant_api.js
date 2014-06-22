@@ -6,7 +6,6 @@ var Tenant				= require('../models/tenant');
 var Landlord			= require('../models/landlord');
 var nodemailer			= require("nodemailer");
 
-
 // Called when hitting route
 // /api/propsForTenant
 exports.getPropsForTenant = function(req, res) {
@@ -14,12 +13,17 @@ exports.getPropsForTenant = function(req, res) {
 	    if(err) res.send(err);
 
 	    var theOpts = req.body.searchOpts;
+	    console.log('the opts: ' + JSON.stringify(theOpts));
 	    
 	    var searchParams = {
-	    	price : { $gte: Number(theOpts.priceLow), $lte: Number(theOpts.priceHigh) },
-	    	num_beds : { $gte: Number(theOpts.bedsMin), $lte: Number(theOpts.bedsMax) },
-	    	num_baths : { $gte: Number(theOpts.bathsMin), $lte: Number(theOpts.bathsMax) }
+	    	price 		 : { $gte: Number(theOpts.priceLow), $lte: Number(theOpts.priceHigh) },
+	    	num_beds 	 : { $gte: Number(theOpts.bedsMin), $lte: Number(theOpts.bedsMax) },
+	    	num_baths 	 : { $gte: Number(theOpts.bathsMin), $lte: Number(theOpts.bathsMax)},
 	    };
+	    if(theOpts.neighborhoods.length > 0) {
+	    	searchParams.neighborhood = { $in : theOpts.neighborhoods };
+	    }
+
 	    var prop_ids = [];
 	    junctions.forEach(function(junc) {
 	        prop_ids.push(junc.PropertyId); 
@@ -33,8 +37,7 @@ exports.getPropsForTenant = function(req, res) {
 	    	} else {
 		    	var propJunctions = [];
 
-		    	// set the swipe status to -1 to indicate
-		    	// user has not yet responded
+		    	// set the swipe status to -1 to indicate user has not yet responded
 		    	properties.forEach(function(entry) {
 		    		var newJunc = { 
 		    			"email" 		: req.body.email,
@@ -68,16 +71,20 @@ exports.getPropsForTenant = function(req, res) {
 function sendEmailToLandlord(aJunc) {
 	Landlord.findOne({ _id : aJunc.LandlordId }, function (err, aLandlord) {
 		if(err) console.log('got an error finding the landlord: ' + err);
-		var smtpTransport = nodemailer.createTransport("SMTP",{
-			service: "Gmail",
-			auth: {
-			    user: "tyler@shimmy-properties.com",
-			    pass: "Ranlou1989"
-			}
+
+		var smtpTransport = nodemailer.createTransport("SMTP", {
+		    host: "smtp.mailgun.org", // hostname
+		    secureConnection: true, // use SSL
+		    port: 465, // port for secure SMTP
+		    auth: {
+		        user: "postmaster@shimmy-properties.com",
+		        pass: "1bnc0d15hub3"
+		    }
 		});
+
 		if(!aLandlord) {
 			var mailOptions = {
-			    from: "Get Shimmy! <tyler@shimmy-properties.com>", 
+			    from: "Shimmy! <tyler@shimmy-properties.com>", 
 			    to: "tyler@shimmy-properties.com", 
 			    subject: "ERROR!", 
 			    text: "There was an error in associating a junction. id: " + aJunc._id,
@@ -85,7 +92,7 @@ function sendEmailToLandlord(aJunc) {
 			}
 		} else {
 			var mailOptions = {
-			    from: "Get Shimmy! <tyler@shimmy-properties.com>", 
+			    from: "Shimmy! <tyler@shimmy-properties.com>", 
 			    to: aLandlord.local.email, 
 			    subject: "Shimmy-Properties: You have a new lead!", 
 			    text: "You have a new lead! Please login http://www.shimmy-properties.com/ to view. id: " + aJunc._id,
@@ -155,6 +162,40 @@ exports.createNewTenant = function(req, res) {
     	fb_token		: newTenant.fb_token
 	}, function(err, aTenant){
 		if(err) res.send('failed to create tenant');
+		var smtpTransport = nodemailer.createTransport("SMTP", {
+		    host: "smtp.mailgun.org", // hostname
+		    secureConnection: true, // use SSL
+		    port: 465, // port for secure SMTP
+		    auth: {
+		        user: "postmaster@shimmy-properties.com",
+		        pass: "1bnc0d15hub3"
+		    }
+		});
+
+		/* text: "Thank you for joining Shimmy, the best way to hunt for apartments. Please feel free to email me here anytime with questions, feedback or ideas. I read every email.
+			If you like the app, we would greatly appreciate it if you told your friends about it by showing it to them or mentioning it on facebook. Thank You!
+
+			Cheers,
+			Tyler Harrington
+			Co-Founder & CEO
+			tyler@shimmy-properties.com"*/
+
+		var mailOptions = {
+		    from: "Get Shimmy! <tyler@shimmy-properties.com>", 
+		    to: aTenant.email, 
+		    subject: "Thanks for joining Shimmy!", 
+		    html: '<b>Thank you for joining Shimmy, the best way to hunt for apartments.</b><p>Please feel free to email me here anytime with questions, feedback or ideas. I read every email. If you like the app, we would greatly appreciate it if you told your friends about it by showing it to them or mentioning it on facebook. Thank You!</p><p>Cheers, <br/>Tyler Harrington<br />Co-Founder & CEO<br />tyler@shimmy-properties.com</p>'
+		}
+
+		smtpTransport.sendMail(mailOptions, function(error, response){
+		   if(error){
+		        console.log(error);
+		    }else{
+		        console.log("Message sent: " + response.message);
+			}
+			smtpTransport.close();
+		})
+
 		res.send(aTenant);
 	})
 };
@@ -233,13 +274,7 @@ exports.syncPropertiesForTenant = function(req, res) {
 
 		Property.find({ '_id' : { $in : propIds }}, function(err, props) {
 			if(err) res.send(422, err);
-			var unrented_props = [];
-			for(var j = 0; j < props.length; j++) {
-				if(!props[j].is_rented) {
-					unrented_props.push(props[j]);
-				}
-			}
-			res.json(201, unrented_props);
+			res.json(201, props);
 		});
 	});
 };

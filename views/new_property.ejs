@@ -75,16 +75,15 @@
 
           <!-- ****************** BEGIN NAVIGATION BUTTONS ****************** -->
           <div class="form-group">
-              <div class="pull-right">
-                <a class="btn btn-default" ng-click="rc.propertyWizard.backward()" ng-show="rc.propertyWizard.currentIndex > rc.propertyWizard.firstIndex">Back</a>
-                <a class="btn btn-primary" data-loading-text="Please Wait..." ng-click="rc.propertyWizard.forward()" ng-show="rc.propertyWizard.currentIndex < rc.propertyWizard.navigationLength">Continue</a>
-                <a class="btn btn-primary" ng-click="rc.propertyWizard.forward()" ng-show="rc.propertyWizard.currentIndex == rc.propertyWizard.navigationLength">Complete</a>
-              </div>
+            <div class="pull-right">
+              <a class="btn btn-default" ng-click="rc.propertyWizard.backward()" ng-show="rc.propertyWizard.currentIndex > rc.propertyWizard.firstIndex">Back</a>
+              <a class="btn btn-primary" data-loading-text="Please Wait..." ng-click="rc.propertyWizard.forward()" ng-show="rc.propertyWizard.currentIndex < rc.propertyWizard.navigationLength">Continue</a>
+              <a class="btn btn-primary" ng-click="rc.propertyWizard.forward()" ng-show="rc.propertyWizard.currentIndex == rc.propertyWizard.navigationLength">Complete</a>
             </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  
 </body>
 </html>

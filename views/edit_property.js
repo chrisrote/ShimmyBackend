@@ -33,6 +33,7 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
 	$http.get('/api/propertyById/' + $scope.prop_id)
 		.success(function(properties) {
 			$scope.my_property = properties[0];
+            console.log('got property: ' + JSON.stringify(properties[0]))
             if($scope.my_property.is_rented) {
                 $scope.tf_form = {type : $scope.tf_options[1].value};
             }
@@ -179,7 +180,7 @@ function editPropController($scope, $location, $http, $window, $timeout, $upload
                                         $scope.my_property.imageURLs.push(parsedData.location);
                                     })
                                     .error(function(data) {
-                                        alert('There was an uploading the images. Please contact admin@shimmylandlord.com for assistance');
+                                        alert('There was an error uploading the images. Please contact admin@shimmylandlord.com for assistance');
                                     })
                             } else {
                                 alert('Upload Failed');

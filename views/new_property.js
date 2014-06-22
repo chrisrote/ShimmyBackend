@@ -9,8 +9,9 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
 	$scope.imageUploads = [];
     $scope.comp_images = [];
     $scope.files = [];
-
+    $scope.new_property.imageURLs = [];
     var s3_asset_folder = 'shimmy-assets/'; 
+    $scope.selectedImageIndex = 0;
 
     $http.get('/api/config').success(function(config) {
         $scope.my_config = config;
@@ -24,6 +25,23 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
     $scope.bed_form = {type : $scope.bed_options[0].value};
     $scope.bath_form = {type : $scope.bath_options[0].value};
 
+    $scope.changeDefault = function(index) {
+        if($scope.selectedImageIndex != index) {
+            $scope.selectedImageIndex = index;
+            var body = {
+                imageArr : $scope.new_property.imageURLs,
+                firstImageURL : $scope.new_property.imageURLs[index]
+            };
+
+            $http.put('/api/makeImagePrimary/' +  $scope.new_property._id, body)
+                .success(function(data){
+                    console.log('got response: ' + JSON.stringify(data));
+                })
+                .error(function(data){
+                    console.log('Error: ' + data);
+                });
+        }
+    };
 
     $scope.abort = function(index) {
         $scope.upload[index].abort();
@@ -59,15 +77,7 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
 
 
   	$scope.completeProperty = function() {
-      var myImages = {};
-      myImages['imageArr'] = $scope.imageUploads;  		
-      $http.put('/api/updatePropertyImages/' + $scope.propertyId, myImages)
-  			.success(function(data){
-  				$window.location.href = '/profile';
-  			})
-  			.error(function(data) {
-  				alert('There was an error. Please contact admin@shimmylandlord.com for assistance');
-  			})
+        $window.location.href = '/profile';
   	};
 
     function getBlobFromURL(dataURL) {
@@ -95,14 +105,15 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
     }
 
 
-    function sendToS3(data, i) {
+    function sendToS3(data) {
         var img = getBlobFromURL(data)
         img.progress = parseInt(0);
+        img.imgData = data;
         $scope.comp_images.push(img);
 
         $http.get('/api/s3Policy?mimeType='+ img.type).success(function(response) {
             var s3Params = response;
-            $scope.upload[i] = $upload.upload({
+            $upload.upload({
                 url: 'https://' + $scope.my_config.awsConfig.bucket + '.s3.amazonaws.com/',
                 method: 'POST',
                 data: {
@@ -126,7 +137,18 @@ function($scope, $http, $location, $window, $q, $timeout, $upload){
                         key: data.postresponse.key,
                         etag: data.postresponse.etag
                     };
-                    $scope.imageUploads.push(parsedData);                                
+                    $scope.imageUploads.push(parsedData); 
+                    var myArr = [];
+                    myArr.push(parsedData);
+                    var myImages = {};
+                    myImages['imageArr'] = myArr;   
+                    $http.put('/api/updatePropertyImages/' + $scope.propertyId, myImages)
+                        .success(function(data){
+                            $scope.new_property.imageURLs.push(parsedData.location);
+                        })
+                        .error(function(data) {
+                            alert('There was an error uploading the images. Please contact admin@shimmylandlord.com for assistance');
+                        })                               
                 } else {
                     alert('Upload Failed');
                 }

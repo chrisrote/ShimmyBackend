@@ -40,6 +40,8 @@ module.exports = function(app, passport) {
 	app.post('/api/property', isLoggedIn, prop_api.createProperty);
 	app.put('/api/updateProperty', isLoggedIn, prop_api.updateProperty);
 	app.put('/api/updatePropertyImages/:property_id', isLoggedIn, prop_api.updatePropertyImageArr);
+	app.put('/api/makeImagePrimary/:property_id', isLoggedIn, prop_api.makeImagePrimary);
+
 	app.put('/api/updatePropImagesWithNewArr/:property_id', isLoggedIn, prop_api.newPropertyImageArr);
 	app.delete('/api/property/:property_id', isLoggedIn, prop_api.deleteProperty);
 	app.get('/api/neighborhoods', prop_api.getNeighborhoods);

@@ -44,6 +44,8 @@ exports.createProperty = function(req, res) {
 	});
 };
 
+// ===================================================
+// FIND THE LAT AND LONG FOR A PROPERTY VIA GOOGLE
 function findLatLong(info, prop_id) {
 	console.log('finding the lat long');
 	var geocode_API_key = 'AIzaSyCa5lOnYd8klc02w9Up2mETb-uPwou-adg';
@@ -145,6 +147,25 @@ exports.newPropertyImageArr = function(req, res) {
 	});
 };
 
+exports.makeImagePrimary = function(req, res) {
+	var query = { _id : req.params.property_id };
+	var imageArray = req.body['imageArr'];
+	var firstImage = req.body['firstImageURL'];
+
+	for(var i = 0; i < imageArray.length; i++) {
+		if(imageArray[i] === firstImage) {
+			var temp = imageArray[0];
+			imageArray[0] = imageArray[i];
+			imageArray[i] = temp;
+		}
+	}
+
+	var updates = { imageURLs : imageArray };
+	Property.update(query, updates, function(err, affected) {
+		res.json(201, 'Updated property with first image');
+	});
+};
+
 // ===================================================
 // Update Property Images
 exports.updatePropertyImageArr = function(req, res) {
@@ -164,7 +185,7 @@ exports.updatePropertyImageArr = function(req, res) {
 		
 		var updates = { imageURLs : myImages };
 		Property.update(query, updates, function(err, affected) {
-			res.send('success');
+			res.json(201, property);
 		});
 	});
 };
@@ -208,7 +229,6 @@ exports.getPropsByLandlord = function(req, res) {
 
 	Property.find({ 'landlord_id' : landlord_id}, function(err, properties) {
 		if(err) res.send(err);
-		console.log('got properties: ' + JSON.stringify(properties));
 		res.send(properties);
 	});
 };

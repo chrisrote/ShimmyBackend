@@ -15,3 +15,16 @@
       height: 60px;
       background-color: #f5f5f5;
     }
+
+.propertyImageRow {
+  padding-bottom:0.5cm;
+}
+
+.selectedImage {
+  padding:1px;
+  border:2px solid #74AFAD;
+}
+
+.propImage {
+  max-height: 100px; 
+}
